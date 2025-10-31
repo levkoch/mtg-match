@@ -1,0 +1,72 @@
+\documentclass{article}
+\usepackage{import}
+
+\subimport{}{macro.tex}
+\hypersetup{colorlinks=true,urlcolor=blue}
+\setlength\parindent{0px}
+
+\title{CSE 455: Computer Vision Project Proposal}
+\author{Lev Kochergin \and Riyosha Sharma}
+\date{October 23, 2025}
+
+\begin{document}
+\maketitle
+
+\textbf{We have multiple ideas on what we would like to do, and are planning to discuss with a TA during office hours tomorrow on October 24th to select one to move forward with.}
+
+\section*{Idea A: Magic: The Gathering Card Detection Tool}
+
+\textbf{Motivation} \\
+Many collectors and bulk buyers need a way to assess their inventories ranging into the tens of thousands of cards. As most are processed by hand and inputted into collection software, they are a prime target for being ran instead by a computer vision algorithm to detect what inventory is present in a collection.
+
+Multiple existing tools for detecting Magic: The Gathering cards exist, but they are often slow, require an internet connection to process or require buying specialized hardware. Examples include the one built into the \href{https://apps.apple.com/us/app/tcgplayer/id1247645833}{TCGPlayer app}, or \href{https://tcgmachines.com/product}{TCG Machines}. \\
+
+\textbf{Project Goals} \\
+As something lightweight, we want it to be able to run locally on either a mobile device or a computer. Given a live stream of video, it should be able to accurately identify cards and output which one it is seeing. It will connect the visuals to important information, like the card name and the set they were released in. It should also be able to export the collection to a \texttt{.csv} file so that it can be imported into collection management software. \\
+
+\textbf{Milestones}
+\begin{enumerate}
+    \item Week 1 - Data collection \& preprocessing: gather card images, determine annotation format.
+    \item Week 2 - Base components: detect trading card from image, map a processed trading card to th
+    \item Week 3 - Model improvement: improve performance, particularly speed with detection.
+    \item Week 4 - Process live detection pathway to detect when the card shown has changed.
+    \item Week 5 - Process export and conformity to online collection storage programs.
+\end{enumerate}
+
+\textbf{Stretch Goals}
+\begin{enumerate}
+    \item Downsizing and packaging model to run locally on an mobile device.
+    \item UI Integration for a mobile interface.
+\end{enumerate}
+
+\textbf{Why This is Interesting} \\
+There are over 30,000 Magic: The Gathering cards, so we can't use a multi-class regression to detect which card is which. We will likely have to create a vectorized representation of the card (like with HoG) and then compare that against the card database. We will also have to work on detecting the cards within a space and process inputs as quickly as possible, so that they can be an effective tool. However, the data set library of cards that it could detect is well labeled and pretty well-normalized, as the card images are used in many fan sites across the internet. Additionally, the cards themselves are flat, which means that we have to do much less processing to turn the object to face "forward".
+
+\section*{Idea B: Inventory Detection}
+
+\textbf{Motivation} \\
+Keeping track of inventory is an integral part of the retail business, so that customers are given a maximal range of choices of what to purchase, and shopkeepers don't erroneously purchase overstock of products they already have avaliable.  \\
+
+\textbf{Project Goals} \\
+Develop a computer vision system to detect, count, and track inventory items on retail or warehouse shelves. The system will estimate stock levels, detect low-stock or missing items, and optionally provide a visualization/dashboard for warehouse or store managers. The project aims to improve inventory accuracy, reduce manual counting effort, and handle real-world challenges like dense packing and occlusion. \\
+
+\textbf{Milestones} \\
+\begin{enumerate}
+    \item Week 1: Dataset exploration \& preprocessing and augmentation
+    \item Week 2: Baseline detection and initial model training
+    \item Week 3: Fine-tuning, improving accuracy \& implementing counting
+    \item Week 4: Low-stock alerts \& occlusion handling
+    \item Week 5: Developing an inventory dashboard (Tableau/web-based)
+\end{enumerate}
+
+\textbf{Stretch Goals} \\
+\begin{enumerate}
+    \item Explore multiframe tracking/video tracking
+    \item Add function to finetune on custom datasets
+    \item Lightweight edge deployment for real-time inventory monitoring
+\end{enumerate}
+
+\textbf{Why This is Interesting} \\
+There are many projects out there that detect whether items are in stock or not, but taking that process further and marking them as "in stock" or "low stock" when only a couple are left would give business owners time to restock their products without having to wait for them to completely sell out. There are also many datasets to work with for this problem, giving us a good base to pull from.
+
+\end{document}
