@@ -1,2 +1,7 @@
+# don't upload the generated images, or else that's 2GB of data
+# create these using create_test_images.py
 /data/generations
+/data/generations.json
+
+# mac nonsense
 .DS_Store
