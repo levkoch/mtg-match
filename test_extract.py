@@ -6,6 +6,7 @@ assessing whether we are able to detect what it is will be done later.
 """
 
 import json
+import cv2
 import numpy as np
 from scipy.spatial.distance import cdist
 from extract import (
@@ -122,7 +123,7 @@ def compute_polygon_loss(
 
 
 def evaluate_detection(
-    labels_dict, image_dir, detect_function: DETECTOR, method='mean_distance'
+    labels_dict, image_dir, detect_function: DETECTOR, method='mean_distance', display = False
 ):
     """
     Evaluate detection performance across multiple labeled images.
@@ -153,11 +154,25 @@ def evaluate_detection(
 
         # Run detection
         pred_points, img = detect_function(img_path, False, False)
-
+        
         # Compute loss
         loss, _ = compute_polygon_loss(
             pred_points, true_corners, method=method
         )
+
+        # we won't display everything, but a random sampling
+        if display and np.random.randint(0, 40) == 0:
+            # the returned image already has the contours drawn on it,
+            # add true contours
+            reordered_corners = [true_corners[1], true_corners[0], true_corners[2], true_corners[3]]
+
+            cv2.polylines(img, [np.array(reordered_corners, dtype=np.int32)], True, (255, 0, 0), 3)
+            for point in true_corners: 
+                cv2.circle(img, (int(point[0]), int(point[1])), 8, (0, 0, 255), -1)
+
+            cv2.imshow(f'[{img_name}] loss: {loss}', img)
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
 
         results['per_image'][img_name] = {
             'loss': loss,
@@ -211,41 +226,16 @@ if __name__ == '__main__':
     THRESHOLDS = [1, 3, 5, 10, 20, 40, 60, 100]
 
     results_border = evaluate_detection(
-        labels, './data/generations', detect_card_edges_with_border
+        labels, './data/generations', detect_card_edges_with_border, display=True
     )
 
     for t in THRESHOLDS:
         print(f'<={t} mean deviation: {count_images_under_loss(results_border, t)}')
 
     results_sides = evaluate_detection(
-        labels, './data/generations', detect_card_edges_with_sides
+        labels, './data/generations', detect_card_edges_with_sides, display=True
     )
 
     for t in THRESHOLDS:
         print(f'<={t} mean deviation: {count_images_under_loss(results_sides, t)}')
 
-    """
-    === Summary detect_card_edges_with_border===
-    Successful detections: 698/800
-    Average loss: 169.74
-    1 mean deviation: 0
-    3 mean deviation: 0
-    5 mean deviation: 0
-    10 mean deviation: 0
-    20 mean deviation: 12
-    40 mean deviation: 40
-    60 mean deviation: 81
-    100 mean deviation: 153
-
-    === Summary detect_card_edges_with_sides===
-    Successful detections: 800/800
-    Average loss: 680.20
-    1 mean deviation: 0
-    3 mean deviation: 0
-    5 mean deviation: 0
-    10 mean deviation: 0
-    20 mean deviation: 0
-    40 mean deviation: 0
-    60 mean deviation: 0
-    100 mean deviation: 0
-    """

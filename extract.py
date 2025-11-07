@@ -10,10 +10,7 @@ import cv2
 import numpy as np
 from pathlib import Path
 
-DETECTOR: TypeAlias = Callable[
-    [Path, bool, bool], tuple[list[list[float]], np.ndarray]
-]
-
+DETECTOR: TypeAlias = Callable[[Path, bool, bool], tuple[list[list[float]], np.ndarray]]
 
 def detect_card_edges_with_border(image_path, display=True, show_steps=True):
     """
@@ -79,8 +76,7 @@ def detect_card_edges_with_border(image_path, display=True, show_steps=True):
 
     # Find the largest valid contour (should be the card border)
     if not filtered_contours:
-        if display:
-            print('No valid contours found after filtering')
+        if display: print('No valid contours found after filtering')
         return None, output
 
     # Sort by area and select the largest
@@ -161,19 +157,18 @@ def detect_card_edges_with_border(image_path, display=True, show_steps=True):
 
     return quadrilateral, output
 
-
 def detect_card_edges_with_sides(image_path, display=True, show_steps=True):
     """
     Detect MTG card edges and create a quadrilateral bounding box.
 
-    NOTE: kind of wonky and doesn't quite work on noisy backgrounds.
+    NOTE: kind of wonky and doesn't quite work on noisy backgrounds. 
     the article used some thresholding thing, but i haven't tried that out yet.
-
+    
     Args:
         image_path: Path to the image file
         display: Whether to display the result
         show_steps: Whether to show intermediate processing steps
-
+    
     Returns:
         quadrilateral: 4 corner points of the detected card
         processed_image: Image with the bounding box drawn
@@ -181,49 +176,45 @@ def detect_card_edges_with_sides(image_path, display=True, show_steps=True):
     # Read the image
     img = cv2.imread(image_path)
     if img is None:
-        print(f'Error: Could not read image {image_path}')
+        print(f"Error: Could not read image {image_path}")
         return None, None
     # Create a copy for drawing
     output = img.copy()
-
+    
     # Convert to grayscale
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
+    
     # Apply Gaussian blur to reduce noise
     blurred = cv2.GaussianBlur(gray, (5, 5), 0)
-
+    
     # Apply adaptive thresholding or Canny edge detection
     edges = cv2.Canny(blurred, 50, 150)
-
+    
     # Dilate edges to connect broken edges
     kernel = np.ones((3, 3), np.uint8)
     dilated = cv2.dilate(edges, kernel, iterations=1)
-
+    
     # Find contours
-    contours, _ = cv2.findContours(
-        dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
-    )
-
+    contours, _ = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    
     # filter out unhelpful contours (sometimes it decides to contour the whole image)
     image_area = img.shape[0] * img.shape[1]
     threshold_area = 0.9 * image_area
-    filtered_contours = [
-        c for c in contours if cv2.contourArea(c) < threshold_area
-    ]
-
+    filtered_contours = [c for c in contours if cv2.contourArea(c) < threshold_area]
+        
     contours_img = img.copy()
     cv2.drawContours(contours_img, filtered_contours, -1, (0, 255, 0), 2)
-
+    
     if not filtered_contours:
-        print('No contours found after filtering')
+        print("No contours found after filtering")
         return None, output
-
+    
     largest_contour = filtered_contours[0]
-
+    
     # Approximate the contour to a polygon
     epsilon = 0.01 * cv2.arcLength(largest_contour, True)
     approx = cv2.approxPolyDP(largest_contour, epsilon, True)
-
+    
     # If we have 4 points, we found a quadrilateral
     if len(approx) == 4:
         quadrilateral = approx.reshape(4, 2)
@@ -232,14 +223,14 @@ def detect_card_edges_with_sides(image_path, display=True, show_steps=True):
         rect = cv2.minAreaRect(largest_contour)
         box = cv2.boxPoints(rect)
         quadrilateral = np.intp(box)
-
+    
     # Draw the quadrilateral
     cv2.drawContours(output, [quadrilateral], 0, (0, 255, 0), 3)
-
+    
     # Draw corner points
     for point in quadrilateral:
         cv2.circle(output, tuple(point), 8, (0, 0, 255), -1)
-
+    
     if display:
         # Prepare all images for display
         def resize_for_display(image, max_dim=800):
@@ -248,27 +239,27 @@ def detect_card_edges_with_sides(image_path, display=True, show_steps=True):
                 height, width = image.shape
             else:  # Color
                 height, width = image.shape[:2]
-
+            
             if max(height, width) > max_dim:
                 scale = max_dim / max(height, width)
                 return cv2.resize(image, None, fx=scale, fy=scale)
             return image
-
+        
         if show_steps:
             # Show all intermediate steps
             steps = [
-                ('1. Original Image', img),
-                ('4. Canny Edges', edges),
-                ('5. Dilated Edges', dilated),
-                ('6. All Contours', contours_img),
-                ('7. Final Detection', output),
+                ("1. Original Image", img),
+                ("4. Canny Edges", edges),
+                ("5. Dilated Edges", dilated),
+                ("6. All Contours", contours_img),
+                ("7. Final Detection", output)
             ]
-
+            
             for title, step_img in steps:
                 display_img = resize_for_display(step_img)
                 cv2.imshow(title, display_img)
-
-            print('\nPress any key to continue to next image...')
+            
+            print("\nPress any key to continue to next image...")
             cv2.waitKey(0)
             cv2.destroyAllWindows()
         else:
@@ -277,5 +268,5 @@ def detect_card_edges_with_sides(image_path, display=True, show_steps=True):
             cv2.imshow('Card Detection', display_img)
             cv2.waitKey(0)
             cv2.destroyAllWindows()
-
+    
     return quadrilateral, output

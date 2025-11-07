@@ -220,13 +220,24 @@ def augment_card_with_corners(
     scale = np.random.uniform(*scale_range)
     keystone_strength = np.random.uniform(*keystone_range)
 
+    # Initialize corners in original card space
+    corners = np.array(
+        [
+            [0, 0],  # top-left
+            [w, 0],  # top-right
+            [0, h],  # bottom-left
+            [w, h],  # bottom-right
+        ],
+        dtype=np.float32,
+    )
+
     # Get rotation matrix and new dimensions
     center = (w // 2, h // 2)
     new_w, new_h, rotation_matrix = get_rotated_bounding_box(
         (h, w), angle, center
     )
 
-    # Apply rotation
+    # Apply rotation to image
     rotated = cv2.warpAffine(
         card_img,
         rotation_matrix,
@@ -235,16 +246,26 @@ def augment_card_with_corners(
         borderValue=(0, 0, 0, 0),
     )
 
-    # Apply scaling
+    # Apply rotation to corners
+    # Convert to homogeneous coordinates for affine transform
+    corners_homogeneous = np.hstack([corners, np.ones((4, 1))])
+    rotated_corners = (rotation_matrix @ corners_homogeneous.T).T
+
+    # Apply scaling to image
     scaled_w = int(new_w * scale)
     scaled_h = int(new_h * scale)
     scaled = cv2.resize(
         rotated, (scaled_w, scaled_h), interpolation=cv2.INTER_LINEAR
     )
 
+    # Apply scaling to corners
+    scale_x = scaled_w / new_w
+    scale_y = scaled_h / new_h
+    scaled_corners = rotated_corners * [scale_x, scale_y]
+
     # Apply keystone warping (perspective transformation)
     if keystone_strength > 0:
-        # Source corners (current rectangle)
+        # Source corners (current rectangle bounds)
         src_corners = np.array(
             [
                 [0, 0],  # top-left
@@ -282,7 +303,7 @@ def augment_card_with_corners(
         )
         adjusted_matrix = translation @ perspective_matrix
 
-        # Apply perspective warp
+        # Apply perspective warp to image
         warped_w = max_x - min_x
         warped_h = max_y - min_y
         scaled = cv2.warpPerspective(
@@ -293,20 +314,16 @@ def augment_card_with_corners(
             borderValue=(0, 0, 0, 0),
         )
 
-        # Update dimensions and corner positions
+        # Apply perspective transform to corners
+        corners_homogeneous = np.hstack([scaled_corners, np.ones((4, 1))])
+        warped_corners_homogeneous = (adjusted_matrix @ corners_homogeneous.T).T
+        # Convert from homogeneous coordinates
+        warped_corners = warped_corners_homogeneous[:, :2] / warped_corners_homogeneous[:, 2:]
+
+        # Update dimensions and corners
         scaled_w, scaled_h = warped_w, warped_h
-        scaled_corners = dst_corners - [min_x, min_y]
-    else:
-        # No keystone: corners are just the rectangle corners
-        scaled_corners = np.array(
-            [
-                [0, 0],  # top-left
-                [scaled_w, 0],  # top-right
-                [0, scaled_h],  # bottom-left
-                [scaled_w, scaled_h],  # bottom-right
-            ],
-            dtype=np.float32,
-        )
+        scaled_corners = warped_corners
+    # else: scaled_corners already computed above
 
     # Create or use background
     if background_img is None:
@@ -344,7 +361,7 @@ def augment_card_with_corners(
     x = np.random.randint(int(margin), int(max(margin + 1, max_x + 1)))
     y = np.random.randint(int(margin), int(max(margin + 1, max_y + 1)))
 
-    # Overlay the card on the background, and then recompute the final corners
+    # Overlay the card on the background and translate corners
     result = overlay_png_with_alpha(scaled, background, x, y)
     final_corners = scaled_corners + [x, y]
 
