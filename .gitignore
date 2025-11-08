@@ -2,6 +2,8 @@
 # create these using create_test_images.py
 data/generations
 data/generations.json
+data/basis
+data/basis.json
 
 # mac nonsense
 .DS_Store

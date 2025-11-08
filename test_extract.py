@@ -6,9 +6,12 @@ assessing whether we are able to detect what it is will be done later.
 """
 
 import json
+from typing import Any
 import cv2
+import matplotlib.pyplot as plt
 import numpy as np
 from scipy.spatial.distance import cdist
+
 from extract import (
     DETECTOR,
     detect_card_edges_with_border,
@@ -217,6 +220,72 @@ def count_images_under_loss(results, threshold):
             count += 1
     return count
 
+def display_losses(results: dict[str, dict[str, Any]], kind: str) -> None:
+    losses = [
+        img_results['loss'] 
+        for _, img_results in results['per_image'].items() 
+        if img_results['loss'] is not None
+    ]
+    
+    # Convert to array and separate inf values
+    losses = np.array(losses)
+    inf_count = np.sum(np.isinf(losses))
+    finite_losses = losses[np.isfinite(losses)]
+    finite_losses = finite_losses[finite_losses > 0]  # Filter out zeros and negatives
+
+    # Create figure and axis
+    fig, ax = plt.subplots(figsize=(12, 6))
+
+    # Create histogram with logarithmic bins for finite values
+    if len(finite_losses) > 0:
+        log_bins = np.logspace(np.log10(finite_losses.min()), np.log10(finite_losses.max()), 30)
+        counts, bins, patches = ax.hist(finite_losses, bins=log_bins, edgecolor='black', alpha=0.7, label='Finite losses')
+        
+        # Add a bar for inf values at the end if they exist
+        if inf_count > 0:
+            # Position the inf bar after the last bin
+            max_x = finite_losses.max()
+            inf_x_position = max_x * 2  # Place it at 2x the maximum value
+            bar_width = max_x * 0.5  # Make the bar width proportional
+            
+            ax.bar(inf_x_position, inf_count, width=bar_width, color='red', 
+                alpha=0.7, edgecolor='black', label=f'Inf ({inf_count})')
+            
+            # Add text label on the inf bar
+            ax.text(inf_x_position, inf_count, f'{inf_count}', 
+                    ha='center', va='bottom', fontweight='bold')
+            ax.text(inf_x_position, 0, 'inf', ha='center', va='top', fontsize=10, fontweight='bold')
+
+    # Set x-axis to log scale
+    ax.set_xscale('log')
+
+    # Labels and title
+    ax.set_xlabel('Loss Value (log scale)', fontsize=12)
+    ax.set_ylabel('Frequency', fontsize=12)
+    ax.set_title(f'Distribution of Losses using {kind} (Log Scale)', fontsize=14, fontweight='bold')
+
+    # Add grid for better readability
+    ax.grid(True, alpha=0.3, which='both', linestyle='--')
+
+    # Add legend if there are inf values
+    if inf_count > 0:
+        ax.legend()
+
+    # Add statistics as text
+    if len(finite_losses) > 0:
+        median_loss = np.median(finite_losses)
+        mean_loss = np.mean(finite_losses)
+        stats_text = f'Finite: {len(finite_losses)}\nInf: {inf_count}\nMedian: {median_loss:.4f}\nMean: {mean_loss:.4f}'
+    else:
+        stats_text = f'Finite: 0\nInf: {inf_count}'
+
+    ax.text(0.02, 0.98, stats_text,
+            transform=ax.transAxes, verticalalignment='top',
+            bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
+
+    plt.tight_layout()
+    plt.show()
+
 
 if __name__ == '__main__':
 
@@ -226,15 +295,19 @@ if __name__ == '__main__':
     THRESHOLDS = [1, 3, 5, 10, 20, 40, 60, 100]
 
     results_border = evaluate_detection(
-        labels, './data/generations', detect_card_edges_with_border, display=True
+        labels, './data/generations', detect_card_edges_with_border, # display=True
     )
+
+    display_losses(results_border, 'border detection')
 
     for t in THRESHOLDS:
         print(f'<={t} mean deviation: {count_images_under_loss(results_border, t)}')
 
     results_sides = evaluate_detection(
-        labels, './data/generations', detect_card_edges_with_sides, display=True
+        labels, './data/generations', detect_card_edges_with_sides, # display=True
     )
+
+    display_losses(results_sides, 'side detection')
 
     for t in THRESHOLDS:
         print(f'<={t} mean deviation: {count_images_under_loss(results_sides, t)}')

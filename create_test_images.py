@@ -17,18 +17,19 @@ from concurrent import futures
 from pathlib import Path
 from typing import Optional
 
+from config import SETS
+
 
 def collect_test_cards_from_scryfall(
     total_cards: int = 100,
 ) -> list[tuple[np.ndarray, str, str]]:
     """
-    collects `total_cards` random card images from scryfall.
+    collects at most `total_cards` random card images from scryfall.
+    saves all of them to the ground truth labels.
 
     each one includes the card image of shape (height, width, 4) where the 4th channel is png alpha,
     card name and set to later be able to find it again.
     """
-
-    SETS = ['fut', 'uma', 'rna', 'war', 'ktk', 'm19', 'otj', 'blb']
 
     url = f'https://api.scryfall.com/cards/search?q=' + (
         ' or '.join(f'set:{s}' for s in SETS)
@@ -61,9 +62,6 @@ def collect_test_cards_from_scryfall(
 
     print(f'found {len(candidates)} total cards')
 
-    if total_cards < len(candidates):
-        candidates = random.sample(candidates, total_cards)
-
     def collect_test_card(
         image_url, card_name, card_set
     ) -> tuple[np.ndarray, str, str]:
@@ -81,6 +79,7 @@ def collect_test_cards_from_scryfall(
 
     tasks: list[futures.Future[tuple[np.ndarray, str, str]]] = []
     result: list[tuple[np.ndarray, str, str]] = []
+    basis: dict[str, dict[str, str]] = {}
 
     # process with threads to make this faster
     with futures.ThreadPoolExecutor() as exc:
@@ -92,13 +91,25 @@ def collect_test_cards_from_scryfall(
         if group[1] == '':
             continue
         result.append(group)
+
+        card_num = "c{:04d}".format(len(result))
+
+        cv2.imwrite(f'./data/basis/{card_num}.png', group[0])
+        basis[card_num] = {'name': group[1], 'set': group[2]}
+
         print(
-            f'collected [{len(result):03d}/{total_cards:03d}] test cards',
+            f'collected [{len(result):04d}/{len(candidates):04d}] test cards',
             end='\r',
         )
 
     print('')
 
+    with open('./data/basis.json', 'w') as fp:
+        json.dump(basis, fp, indent=2)
+
+    if total_cards < len(result):
+        return random.sample(result, total_cards)
+    
     return result
 
 
