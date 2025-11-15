@@ -5,5 +5,7 @@ data/generations.json
 data/basis
 data/basis.json
 
+data/*
+
 # mac nonsense
 .DS_Store
