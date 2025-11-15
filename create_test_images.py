@@ -20,96 +20,91 @@ from typing import Optional
 from config import SETS
 
 
-def collect_test_cards_from_scryfall(
-    total_cards: int = 100,
+def collect_test_cards_from_local_database(
+    database_path: str = "./data/card_database.json",
+    total_cards: int = 50,
 ) -> list[tuple[np.ndarray, str, str]]:
     """
-    collects at most `total_cards` random card images from scryfall.
-    saves all of them to the ground truth labels.
+    Load card images from local files using the database's image_file paths.
 
-    each one includes the card image of shape (height, width, 4) where the 4th channel is png alpha,
-    card name and set to later be able to find it again.
+    Returns list of (image_array, card_name, card_set) tuples.
     """
 
-    url = f'https://api.scryfall.com/cards/search?q=' + (
-        ' or '.join(f'set:{s}' for s in SETS)
-    )
-    response = requests.get(
-        url, headers={'User-Agent': 'mtg-match/0.1', 'Accept': '*/*'}
-    )
-    data = response.json()
+    # Load the database
+    if not Path(database_path).exists():
+        print(f"Database not found: {database_path}")
+        return []
 
-    candidates = []
+    with open(database_path, "r") as f:
+        database = json.load(f)
 
-    def process_data(data: list[dict[str, str]]):
-        for group in data:
-            try:
-                candidates.append(
-                    [group['image_uris']['png'], group['name'], group['set']]  # type: ignore
-                )
-            except KeyError:
-                pass
+    if len(database) == 0:
+        print("No cards in database")
+        return []
 
-    process_data(data['data'])
+    print(f"Found {len(database)} cards in database")
 
-    while data.get('has_more', False):
-        url = data['next_page']
-        response = requests.get(
-            url, headers={'User-Agent': 'mtg-match/0.1', 'Accept': '*/*'}
-        )
-        data = response.json()
-        process_data(data['data'])
+    # Select cards to use
+    card_keys = list(database.keys())
+    if total_cards < len(card_keys):
+        selected_keys = card_keys[:total_cards]
+    else:
+        selected_keys = card_keys
 
-    print(f'found {len(candidates)} total cards')
+    result = []
+    basis = {}
 
-    def collect_test_card(
-        image_url, card_name, card_set
-    ) -> tuple[np.ndarray, str, str]:
-        """collect a card for testing from scryfall"""
-        # load the card image into a numpy array4
-        img_response = requests.get(image_url)
-        img_array = np.asarray(bytearray(img_response.content), dtype=np.uint8)
-        img: np.ndarray = cv2.imdecode(
-            img_array, cv2.IMREAD_UNCHANGED
-        )   # type: ignore
-        # img has shape (height, width, 4) where 4th channel is alpha
-        # (becasue it's a png and supports clear in the corners)
+    # Create basis directory
+    Path("./data/basis").mkdir(parents=True, exist_ok=True)
 
-        return (img, card_name, card_set)
+    for i, key in enumerate(selected_keys):
+        try:
+            card_data = database[key]
+            card_name = card_data["name"]
+            card_set = card_data["set"]
 
-    tasks: list[futures.Future[tuple[np.ndarray, str, str]]] = []
-    result: list[tuple[np.ndarray, str, str]] = []
-    basis: dict[str, dict[str, str]] = {}
+            # Get image file path from database
+            if "image_file" in card_data:
+                image_path = Path(card_data["image_file"])
 
-    # process with threads to make this faster
-    with futures.ThreadPoolExecutor() as exc:
-        for group in candidates:
-            tasks.append(exc.submit(collect_test_card, *group))
+            if not image_path.exists():
+                print(f"Image file not found: {image_path}")
+                continue
 
-    for task in futures.as_completed(tasks):
-        group = task.result()
-        if group[1] == '':
+            # Load image
+            img = cv2.imread(str(image_path), cv2.IMREAD_COLOR)
+
+            if img is None:
+                print(f"Could not load image: {image_path}")
+                continue
+
+            # Convert from BGR to BGRA (add alpha channel - transparency) for OpenCV
+            alpha = np.ones((img.shape[0], img.shape[1], 1), dtype=img.dtype) * 255
+            img = np.concatenate([img, alpha], axis=2)
+
+            result.append((img, card_name, card_set))
+
+            # Save basis image and metadata
+            card_num = f"c{len(result):04d}"
+            cv2.imwrite(f"./data/basis/{card_num}.png", img)
+            basis[card_num] = {"name": card_name, "set": card_set}
+
+            print(
+                f"loaded [{len(result):04d}/{len(selected_keys):04d}] local card images",
+                end="\r",
+            )
+
+        except Exception as e:
+            print(f"Error processing card {key}: {e}")
             continue
-        result.append(group)
 
-        card_num = "c{:04d}".format(len(result))
+    print("")
 
-        cv2.imwrite(f'./data/basis/{card_num}.png', group[0])
-        basis[card_num] = {'name': group[1], 'set': group[2]}
-
-        print(
-            f'collected [{len(result):04d}/{len(candidates):04d}] test cards',
-            end='\r',
-        )
-
-    print('')
-
-    with open('./data/basis.json', 'w') as fp:
+    # Save basis metadata
+    with open("./data/basis.json", "w") as fp:
         json.dump(basis, fp, indent=2)
 
-    if total_cards < len(result):
-        return random.sample(result, total_cards)
-    
+    print(f"Loaded {len(result)} cards from local images")
     return result
 
 
@@ -190,9 +185,9 @@ def overlay_png_with_alpha(
 
     # Vectorized alpha blending
     blended = (alpha * card_bgr + (1 - alpha) * bg_region).astype(np.uint8)
-    background[
-        y_offset : y_offset + h, x_offset : x_offset + w, :3
-    ] = blended  # Write back to first 3 channels
+    background[y_offset : y_offset + h, x_offset : x_offset + w, :3] = (
+        blended  # Write back to first 3 channels
+    )
 
     return background
 
@@ -244,9 +239,7 @@ def augment_card_with_corners(
 
     # Get rotation matrix and new dimensions
     center = (w // 2, h // 2)
-    new_w, new_h, rotation_matrix = get_rotated_bounding_box(
-        (h, w), angle, center
-    )
+    new_w, new_h, rotation_matrix = get_rotated_bounding_box((h, w), angle, center)
 
     # Apply rotation to image
     rotated = cv2.warpAffine(
@@ -265,9 +258,7 @@ def augment_card_with_corners(
     # Apply scaling to image
     scaled_w = int(new_w * scale)
     scaled_h = int(new_h * scale)
-    scaled = cv2.resize(
-        rotated, (scaled_w, scaled_h), interpolation=cv2.INTER_LINEAR
-    )
+    scaled = cv2.resize(rotated, (scaled_w, scaled_h), interpolation=cv2.INTER_LINEAR)
 
     # Apply scaling to corners
     scale_x = scaled_w / new_w
@@ -298,9 +289,7 @@ def augment_card_with_corners(
             dst_corners[i, 1] += np.random.uniform(-max_shift_y, max_shift_y)
 
         # Compute perspective transform
-        perspective_matrix = cv2.getPerspectiveTransform(
-            src_corners, dst_corners
-        )
+        perspective_matrix = cv2.getPerspectiveTransform(src_corners, dst_corners)
 
         # Calculate bounds of warped image
         all_x = dst_corners[:, 0]
@@ -329,7 +318,9 @@ def augment_card_with_corners(
         corners_homogeneous = np.hstack([scaled_corners, np.ones((4, 1))])
         warped_corners_homogeneous = (adjusted_matrix @ corners_homogeneous.T).T
         # Convert from homogeneous coordinates
-        warped_corners = warped_corners_homogeneous[:, :2] / warped_corners_homogeneous[:, 2:]
+        warped_corners = (
+            warped_corners_homogeneous[:, :2] / warped_corners_homogeneous[:, 2:]
+        )
 
         # Update dimensions and corners
         scaled_w, scaled_h = warped_w, warped_h
@@ -360,9 +351,10 @@ def augment_card_with_corners(
 
         # Rescale corners proportionally
         center_x, center_y = scaled_w / 2, scaled_h / 2
-        scaled_corners = (
-            scaled_corners - [center_x, center_y]
-        ) * scale_factor + [scaled_w_new / 2, scaled_h_new / 2]
+        scaled_corners = (scaled_corners - [center_x, center_y]) * scale_factor + [
+            scaled_w_new / 2,
+            scaled_h_new / 2,
+        ]
 
         scaled_w, scaled_h = scaled_w_new, scaled_h_new
 
@@ -384,31 +376,49 @@ def load_backgrounds(background_path: str) -> list[np.ndarray]:
     data_dir = Path(background_path)
 
     if not data_dir.exists():
-        print(f'Error: Directory {background_path} does not exist')
+        print(f"Error: Directory {background_path} does not exist")
         return []
 
     image_paths = [
-        f
-        for f in data_dir.iterdir()
-        if f.is_file() and f.suffix.lower() == '.png'
+        f for f in data_dir.iterdir() if f.is_file() and f.suffix.lower() == ".png"
     ]
 
     return [
         cv2.imread(path, cv2.IMREAD_UNCHANGED) for path in image_paths
-    ]   # type: ignore
+    ]  # type: ignore
 
 
-if __name__ == '__main__':
-    cards: list[
-        tuple[np.ndarray, str, str]
-    ] = collect_test_cards_from_scryfall()
-    card = cards[0][0]
-    backgrounds = load_backgrounds('./data/backgrounds')
-    background = backgrounds[0]
+if __name__ == "__main__":
+
+    cards: list[tuple[np.ndarray, str, str]] = collect_test_cards_from_local_database(
+        database_path="./data/card_database.json",
+        total_cards=50,
+    )
+
+    if not cards:
+        print("No cards loaded! Make sure:")
+        print("1. Database exists (run build_database.py first)")
+        print("2. Card images were saved during database building")
+        exit(1)
+
+    # Load backgrounds
+    backgrounds = load_backgrounds("./data/backgrounds")
+    if not backgrounds:
+        print("No backgrounds found! Creating synthetic backgrounds.")
+        # Create some synthetic backgrounds if none exist
+        backgrounds = []
+        for i in range(5):  # Create 5 synthetic backgrounds
+            bg = np.random.randint(50, 200, (1000, 1000, 3), dtype=np.uint8)
+            backgrounds.append(bg)
 
     output = {}
 
+    # Create directories
+    Path("./data/generations").mkdir(parents=True, exist_ok=True)
+
     card_count = 0
+    total_images = 0
+
     for card_img, card_name, card_set in cards:
         card_count += 1
 
@@ -419,21 +429,22 @@ if __name__ == '__main__':
                 margin=50,
             )
 
-            filename = f'c{card_count}bg{background_count}'
+            filename = f"c{card_count}bg{background_count + 1}"
 
             output[filename] = {
-                'corners': corners,
-                'name': card_name,
-                'set': card_set,
+                "corners": corners,
+                "name": card_name,
+                "set": card_set,
             }
-            print(
-                f'created test image: {filename}',
-                end='\r',
-            )
 
-            cv2.imwrite(f'./data/generations/{filename}.png', result)
+            cv2.imwrite(f"./data/generations/{filename}.png", result)
+            total_images += 1
 
-    print('')
+            print(f"created test image: {filename} [{total_images} total]", end="\r")
 
-    with open('./data/generations.json', 'w') as fp:
+    print("")
+
+    with open("./data/generations.json", "w") as fp:
         json.dump(output, fp, indent=2)
+
+    print(f"Created {total_images} test images from {len(cards)} database cards")
