@@ -1,0 +1,86 @@
+{
+    "bin_A": {
+        "bins_name": "bin_A",
+        "bin_counts": [
+            8,
+            8,
+            8
+        ],
+        "detected": 450,
+        "matched": 450,
+        "correct": 126,
+        "total": 450
+    },
+    "bin_B": {
+        "bins_name": "bin_B",
+        "bin_counts": [
+            16,
+            16,
+            16
+        ],
+        "detected": 450,
+        "matched": 450,
+        "correct": 86,
+        "total": 450
+    },
+    "bin_C": {
+        "bins_name": "bin_C",
+        "bin_counts": [
+            16,
+            8,
+            8
+        ],
+        "detected": 450,
+        "matched": 450,
+        "correct": 155,
+        "total": 450
+    },
+    "bin_D": {
+        "bins_name": "bin_D",
+        "bin_counts": [
+            32,
+            8,
+            8
+        ],
+        "detected": 450,
+        "matched": 450,
+        "correct": 161,
+        "total": 450
+    },
+    "bin_E": {
+        "bins_name": "bin_E",
+        "bin_counts": [
+            4,
+            4,
+            4
+        ],
+        "detected": 450,
+        "matched": 450,
+        "correct": 125,
+        "total": 450
+    },
+    "bin_F": {
+        "bins_name": "bin_F",
+        "bin_counts": [
+            8,
+            4,
+            4
+        ],
+        "detected": 450,
+        "matched": 450,
+        "correct": 160,
+        "total": 450
+    },
+    "bin_G": {
+        "bins_name": "bin_G",
+        "bin_counts": [
+            16,
+            4,
+            4
+        ],
+        "detected": 450,
+        "matched": 450,
+        "correct": 171,
+        "total": 450
+    }
+}
