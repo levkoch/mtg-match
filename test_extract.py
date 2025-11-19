@@ -54,8 +54,6 @@ def compute_polygon_loss(
     # Compute pairwise distances
     distances = cdist(pred, true, metric='euclidean')
 
-    # Use Hungarian algorithm (greedy approximation for 4 points)
-    # For 4 points, we can try all 24 permutations, but greedy works well
     matched_indices = []
     used_true = set()
     used_pred = set()

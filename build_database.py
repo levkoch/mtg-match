@@ -11,7 +11,7 @@ from PIL import Image
 from pathlib import Path
 from io import BytesIO
 
-from config import SETS
+from config import BIN_VERSIONS, SETS
 
 
 def extract_card_features(image: np.ndarray) -> dict:
@@ -36,13 +36,18 @@ def extract_card_features(image: np.ndarray) -> dict:
     hash_bytes = np.packbits(binary_hash)
     perceptual_hash = "".join(f"{byte:02x}" for byte in hash_bytes)
 
-    # 2. Color histogram
+    # 2. Color histogram [32, 32, 32] creates an output vector of size 32768 (too much)
     hsv = cv2.cvtColor(processed, cv2.COLOR_BGR2HSV)
-    hist = cv2.calcHist([hsv], [0, 1, 2], None, [32, 32, 32], [0, 180, 0, 256, 0, 256])
-    hist = cv2.normalize(hist, None, norm_type=cv2.NORM_L2)
-    color_histogram = hist.flatten().tolist()
 
-    return {"perceptual_hash": perceptual_hash, "color_histogram": color_histogram}
+    out = {"perceptual_hash": perceptual_hash}
+
+    # 3. histogram bins (orders of magnitude smaller)
+    for bin_name, bin_counts in BIN_VERSIONS:
+        hist = cv2.calcHist([hsv], [0, 1, 2], None, bin_counts, [0, 180, 0, 256, 0, 256])
+        hist = cv2.normalize(hist, None, norm_type=cv2.NORM_L2)
+        out[bin_name] = hist.flatten().tolist()
+        
+    return out
 
 
 def fetch_all_cards_from_sets(sets_list: list) -> list:
@@ -83,7 +88,7 @@ def fetch_all_cards_from_sets(sets_list: list) -> list:
 
 
 def build_database_with_limit(
-    max_cards: int = 50, output_path: str = "./data/card_database.json"
+    max_cards: int = 2000, output_path: str = "./data/card_database.json"
 ):
     """
     Build card database with perceptual hash features, limited to max_cards.
@@ -95,8 +100,7 @@ def build_database_with_limit(
     images_dir = Path("./data/card_images")
     images_dir.mkdir(parents=True, exist_ok=True)
 
-    # Fetch cards from a single set to keep it simple
-    cards_data = fetch_all_cards_from_sets(["m21"])  # Core Set 2021
+    cards_data = fetch_all_cards_from_sets(SETS)
 
     if not cards_data:
         print("No cards found!")
@@ -117,13 +121,13 @@ def build_database_with_limit(
             # Get image URL (normal size)
             image_uris = card.get("image_uris", {})
             if "normal" not in image_uris:
-                print(f"  Skipping {card_name}: No image available")
+                print(f"\n  Skipping {card_name}: No image available")
                 continue
 
             image_url = image_uris["normal"]
 
             # Download image
-            print(f"  Processing {processed + 1}/{max_cards}: {card_name}")
+            print(f"\r  Processing {processed + 1}/{max_cards}: {card_name}", end=" " * 40, flush=True)
             response = requests.get(image_url)
             response.raise_for_status()
 
@@ -139,7 +143,9 @@ def build_database_with_limit(
                 continue
 
             # Create database key
-            card_key = f"{set_code}_{card_name.replace(' ', '_').replace(',', '').replace(':', '').replace('/', '').replace(chr(39), '').replace(chr(34), '')}"
+            norm_name = (card_name.replace(' ', '_').replace(',', '')
+                        ).replace(':', '').replace('/', '').replace("'", '').replace('"', '')
+            card_key = f"{set_code}_{norm_name}"
 
             # Save image to disk
             image_filename = f"{card_key}.png"
@@ -164,6 +170,8 @@ def build_database_with_limit(
             print(f"  Error processing card: {e}")
             continue
 
+    print()  # for newline after progress
+
     # Save database
     Path(output_path).parent.mkdir(parents=True, exist_ok=True)
     with open(output_path, "w") as f:
@@ -171,11 +179,6 @@ def build_database_with_limit(
 
     print(f"Database saved with {len(database)} cards to {output_path}")
     print(f"Card images saved to {images_dir}")
-
-
-def build_complete_database(output_path: str = "./data/card_database.json"):
-    """Build complete database (calls limited version with higher limit)."""
-    build_database_with_limit(max_cards=200, output_path=output_path)
 
 
 def main():
@@ -186,7 +189,7 @@ def main():
         description="Build MTG card database with pHash and color histogram features."
     )
     parser.add_argument(
-        "--max-cards", type=int, default=50, help="Maximum number of cards to process"
+        "--max-cards", type=int, default=2000, help="Maximum number of cards to process"
     )
     parser.add_argument(
         "--output", default="./data/card_database.json", help="Output database file"
