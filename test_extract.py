@@ -14,9 +14,14 @@ from scipy.spatial.distance import cdist
 
 from extract import (
     DETECTOR,
+    detect_card_clahe,
     detect_card_edges_with_border,
+    detect_card_edges_with_border_hsearch,
+    detect_card_edges_with_clahe,
     detect_card_edges_with_sides,
 )
+
+THRESHOLDS = [1, 3, 5, 10, 20, 40, 60, 100]
 
 
 def compute_polygon_loss(
@@ -284,29 +289,40 @@ def display_losses(results: dict[str, dict[str, Any]], kind: str) -> None:
     plt.tight_layout()
     plt.show()
 
+    for t in THRESHOLDS:
+        print(f'<={t} mean deviation: {count_images_under_loss(results, t)}')
+
 
 if __name__ == '__main__':
-
     with open('./data/generations.json') as fp:
         labels = json.load(fp)
-
-    THRESHOLDS = [1, 3, 5, 10, 20, 40, 60, 100]
 
     results_border = evaluate_detection(
         labels, './data/generations', detect_card_edges_with_border, # display=True
     )
 
-    display_losses(results_border, 'border detection')
+    display_losses(results_border, 'border detection (before tuning)')
 
-    for t in THRESHOLDS:
-        print(f'<={t} mean deviation: {count_images_under_loss(results_border, t)}')
+    def detect_tuned(img_path: str, A, B):
+        return detect_card_edges_with_border_hsearch(
+            img_path, black_threshold=30, blur_kernel=(3,3), close_iterations=1, open_iterations=2)
+    
+    results_tuned = evaluate_detection(
+        labels, './data/generations', detect_tuned,
+    )
+    display_losses(results_tuned, 'tuned border detection')
+
+    quit()
+
+    results_clahe = evaluate_detection(
+        labels, './data/generations', detect_card_edges_with_clahe, # display=True
+    )
+
+    display_losses(results_clahe, 'clahe border detection')
 
     results_sides = evaluate_detection(
         labels, './data/generations', detect_card_edges_with_sides, # display=True
+
     )
 
     display_losses(results_sides, 'side detection')
-
-    for t in THRESHOLDS:
-        print(f'<={t} mean deviation: {count_images_under_loss(results_sides, t)}')
-
