@@ -14,10 +14,8 @@ from scipy.spatial.distance import cdist
 
 from extract import (
     DETECTOR,
-    detect_card_clahe,
     detect_card_edges_with_border,
     detect_card_edges_with_border_hsearch,
-    detect_card_edges_with_clahe,
     detect_card_edges_with_sides,
 )
 
@@ -278,9 +276,9 @@ def display_losses(results: dict[str, dict[str, Any]], kind: str) -> None:
     if len(finite_losses) > 0:
         median_loss = np.median(finite_losses)
         mean_loss = np.mean(finite_losses)
-        stats_text = f'Finite: {len(finite_losses)}\nInf: {inf_count}\nMedian: {median_loss:.4f}\nMean: {mean_loss:.4f}'
+        stats_text = f'Finite: {len(finite_losses)}\nNone Found (Inf): {inf_count}\nMedian: {median_loss:.4f}\nMean: {mean_loss:.4f}'
     else:
-        stats_text = f'Finite: 0\nInf: {inf_count}'
+        stats_text = f'Finite: 0\nNot Found (Inf): {inf_count}'
 
     ax.text(0.02, 0.98, stats_text,
             transform=ax.transAxes, verticalalignment='top',
@@ -297,6 +295,13 @@ if __name__ == '__main__':
     with open('./data/generations.json') as fp:
         labels = json.load(fp)
 
+    results_sides = evaluate_detection(
+        labels, './data/generations', detect_card_edges_with_sides, # display=True
+
+    )
+
+    display_losses(results_sides, 'side detection')
+
     results_border = evaluate_detection(
         labels, './data/generations', detect_card_edges_with_border, # display=True
     )
@@ -312,17 +317,4 @@ if __name__ == '__main__':
     )
     display_losses(results_tuned, 'tuned border detection')
 
-    quit()
-
-    results_clahe = evaluate_detection(
-        labels, './data/generations', detect_card_edges_with_clahe, # display=True
-    )
-
-    display_losses(results_clahe, 'clahe border detection')
-
-    results_sides = evaluate_detection(
-        labels, './data/generations', detect_card_edges_with_sides, # display=True
-
-    )
-
-    display_losses(results_sides, 'side detection')
+    
