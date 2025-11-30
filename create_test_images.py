@@ -47,7 +47,7 @@ def collect_test_cards_from_local_database(
     # Select cards to use
     card_keys = list(database.keys())
     if total_cards < len(card_keys):
-        selected_keys = card_keys[:total_cards]
+        selected_keys = random.sample(card_keys, total_cards)
     else:
         selected_keys = card_keys
 
@@ -391,8 +391,7 @@ def load_backgrounds(background_path: str) -> list[np.ndarray]:
 if __name__ == "__main__":
 
     cards: list[tuple[np.ndarray, str, str]] = collect_test_cards_from_local_database(
-        database_path="./data/card_database.json",
-        total_cards=50,
+        database_path="./data/card_database.json", total_cards=200
     )
 
     if not cards:
