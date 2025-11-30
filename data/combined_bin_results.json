@@ -1,0 +1,100 @@
+{
+    "bin_A": {
+        "bins_name": "bin_A",
+        "bin_counts": [
+            8,
+            8,
+            8
+        ],
+        "detected": 660,
+        "correct": 613,
+        "correct_detected": 605,
+        "correct_in_top5": 648,
+        "correct_in_top5_detected": 639,
+        "total": 800
+    },
+    "bin_B": {
+        "bins_name": "bin_B",
+        "bin_counts": [
+            16,
+            16,
+            16
+        ],
+        "detected": 660,
+        "correct": 618,
+        "correct_detected": 610,
+        "correct_in_top5": 648,
+        "correct_in_top5_detected": 639,
+        "total": 800
+    },
+    "bin_C": {
+        "bins_name": "bin_C",
+        "bin_counts": [
+            16,
+            8,
+            8
+        ],
+        "detected": 660,
+        "correct": 625,
+        "correct_detected": 617,
+        "correct_in_top5": 648,
+        "correct_in_top5_detected": 639,
+        "total": 800
+    },
+    "bin_D": {
+        "bins_name": "bin_D",
+        "bin_counts": [
+            32,
+            8,
+            8
+        ],
+        "detected": 660,
+        "correct": 634,
+        "correct_detected": 626,
+        "correct_in_top5": 648,
+        "correct_in_top5_detected": 639,
+        "total": 800
+    },
+    "bin_E": {
+        "bins_name": "bin_E",
+        "bin_counts": [
+            4,
+            4,
+            4
+        ],
+        "detected": 660,
+        "correct": 632,
+        "correct_detected": 624,
+        "correct_in_top5": 648,
+        "correct_in_top5_detected": 639,
+        "total": 800
+    },
+    "bin_F": {
+        "bins_name": "bin_F",
+        "bin_counts": [
+            8,
+            4,
+            4
+        ],
+        "detected": 660,
+        "correct": 634,
+        "correct_detected": 626,
+        "correct_in_top5": 648,
+        "correct_in_top5_detected": 639,
+        "total": 800
+    },
+    "bin_G": {
+        "bins_name": "bin_G",
+        "bin_counts": [
+            16,
+            4,
+            4
+        ],
+        "detected": 660,
+        "correct": 643,
+        "correct_detected": 635,
+        "correct_in_top5": 648,
+        "correct_in_top5_detected": 639,
+        "total": 800
+    }
+}

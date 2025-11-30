@@ -14,6 +14,7 @@ class HistogramMatcher:
     def __init__(self, cards: list[tuple[str, str]], hists: list[list[float]]):
         self.cards = cards
         self.db_hists = np.array(hists, dtype=np.float32)
+        self.card_to_idx = {card: i for i, card in enumerate(cards)}
 
     def find_matches(self, query_hist, top_k=5):
         """
@@ -26,6 +27,38 @@ class HistogramMatcher:
         top_indices = np.argsort(scores)[-top_k:][::-1]
 
         return [{"card": self.cards[i], "score": scores[i]} for i in top_indices]
+
+    def rerank_candidates(
+        self, query_hist: np.ndarray, candidates: list[dict]
+    ) -> list[dict]:
+        """
+        Re-rank pHash candidates using histogram similarity.
+
+        Args:
+            query_hist: Normalized histogram of query image
+            candidates: List of dicts with 'card' and 'score' keys from pHash matching
+
+        Returns:
+            Re-ranked list with combined scores
+        """
+        query_hist = query_hist.flatten().astype(np.float32)
+
+        for candidate in candidates:
+            card = candidate["card"]
+            idx = self.card_to_idx.get(card)
+            if idx is not None:
+                hist_score = float(np.dot(self.db_hists[idx], query_hist))
+            else:
+                hist_score = 0.0
+
+            # Combine: pHash score and histogram score
+            phash_score = candidate.get("score", 1 - candidate.get("hash_distance", 0))
+            candidate["hist_score"] = hist_score
+            candidate["combined_score"] = 0.6 * phash_score + 0.4 * hist_score
+
+        # Sort by combined score
+        candidates.sort(key=lambda x: x["combined_score"], reverse=True)
+        return candidates
 
 
 class CardMatcher:
@@ -281,6 +314,16 @@ class CardMatcher:
             matches = self.match_histogram(normalized_card, top_k=5)
             card = matches[0]["card"] if matches else None
             top_matches = matches
+        elif match_func == "combined":
+            # Get top-5 from pHash, then re-rank with histogram
+            top_matches = self.match_perceptual_hash(normalized_card, top_k=5)
+            if top_matches and self.matcher is None:
+                # Initialize histogram matcher if needed
+                self.match_histogram(normalized_card, top_k=1)
+            if top_matches and self.matcher:
+                query_hist = self.compute_color_histogram(normalized_card)
+                top_matches = self.matcher.rerank_candidates(query_hist, top_matches)
+            card = top_matches[0]["card"] if top_matches else None
         else:  # perceptual
             top_matches = self.match_perceptual_hash(normalized_card, top_k=5)
             card = top_matches[0]["card"] if top_matches else None
@@ -353,6 +396,7 @@ def main_histograms():
         # Get test images in proper order
         generations_dir = Path("./data/generations")
         test_images = list(generations_dir.glob("*.png"))
+        test_images.sort()
 
         if not test_images:
             print("No test images found in ./data/generations/")
@@ -379,9 +423,10 @@ def main_histograms():
                         corners_dict[k] = np.array(v["corners"], dtype=np.float32)
 
         for img_path in test_images:
-            card, normalized, corners = matcher.process_image(
+            card, normalized, corners, top_matches = matcher.process_image(
                 str(img_path), display=False, match_func="histogram"
             )
+
             detected = False
             matched = card is not None
 
@@ -389,13 +434,32 @@ def main_histograms():
             image_key = img_path.stem
             truth_group = metadata.get(image_key, {})
             ground_truth = (truth_group.get("name", None), truth_group.get("set", None))
-            is_correct = (card == ground_truth) if card else False
+
+            # Check if top match is correct (regardless of border detection)
+            is_correct_overall = (card == ground_truth) if card else False
+
+            # Check if correct answer is in top 5 (regardless of border detection)
+            correct_in_top5 = (
+                any(match["card"] == ground_truth for match in top_matches)
+                if top_matches is not None and ground_truth[0] is not None
+                else False
+            )
 
             # Good detection logic
             gt_corners = corners_dict.get(image_key)
             if corners is not None and gt_corners is not None:
                 loss, _ = compute_polygon_loss(corners, gt_corners)
                 detected = loss <= 20  # Only count as detected if "good"
+
+            # check if top match is correct (only if detected well)
+            is_correct_detected = (card == ground_truth) if card and detected else False
+
+            # Check if correct answer is in top 5 (only correctly detected cards)
+            correct_in_top5_detected = (
+                any(match["card"] == ground_truth for match in top_matches)
+                if detected and top_matches is not None and ground_truth[0] is not None
+                else False
+            )
 
             results.append(
                 {
@@ -405,7 +469,10 @@ def main_histograms():
                     "matched": card is not None,
                     "card": card,
                     "ground_truth": ground_truth,
-                    "correct": is_correct,
+                    "correct": is_correct_overall,
+                    "correct_detected": is_correct_detected,
+                    "correct_in_top5": correct_in_top5,
+                    "correct_in_top5_detected": correct_in_top5_detected,
                 }
             )
 
@@ -414,6 +481,11 @@ def main_histograms():
         detected = sum(1 for r in results if r["detected"])
         matched = sum(1 for r in results if r["matched"])
         correct = sum(1 for r in results if r["correct"])
+        correct_detected = sum(1 for r in results if r["correct_detected"])
+        correct_in_top5_count = sum(1 for r in results if r["correct_in_top5"])
+        correct_in_top5_count_detected = sum(
+            1 for r in results if r["correct_in_top5_detected"]
+        )
 
         bin_results[bins_name] = {
             "bins_name": bins_name,
@@ -421,6 +493,9 @@ def main_histograms():
             "detected": detected,
             "matched": matched,
             "correct": correct,
+            "correct_detected": correct_detected,
+            "correct_in_top5": correct_in_top5_count,
+            "correct_in_top5_detected": correct_in_top5_count_detected,
             "total": len(results),
         }
 
@@ -428,17 +503,23 @@ def main_histograms():
             f"  Detection: {detected}/{len(results)} successful ({detected/len(results)*100:.1f}%)"
         )
         print(
-            f"  Accurately Matched: {correct}/{detected} correct ({correct/detected*100:.1f}%)"
+            f"  Accuracy (on detected cards): {correct_detected}/{detected} correct ({correct_detected/detected*100:.1f}%)"
         )
         print(
-            f"  Overall Accuracy: {correct}/{len(results)} correct ({correct/len(results)*100:.1f}%)"
+            f"  Correct in Top-5 (in detected cards): {correct_in_top5_count_detected}/{detected} ({correct_in_top5_count_detected/detected*100:.1f}%)"
+        )
+        print(
+            f"  Correct in Top-5 (overall): {correct_in_top5_count}/{len(results)} ({correct_in_top5_count/len(results)*100:.1f}%)"
+        )
+        print(
+            f"  Overall accuracy: {correct}/{len(results)} correct ({correct/len(results)*100:.1f}%)"
         )
 
     with open("./data/histogram_bin_results.json", "w") as f:
         json.dump(bin_results, f, indent=4)
 
 
-def main_perceptual():
+def main_perceptual(match_func="perceptual"):
     """Test the complete pipeline on generated test images."""
     matcher = CardMatcher()
 
@@ -478,7 +559,7 @@ def main_perceptual():
     results = []
     for img_path in test_images:
         card, normalized, corners, top_matches = matcher.process_image(
-            str(img_path), display=False
+            str(img_path), display=False, match_func=match_func
         )
 
         detected = False
@@ -600,5 +681,140 @@ def main_perceptual():
                     )
 
 
+def main_combined():
+    """Test combined pHash + histogram reranking with different bin versions."""
+    bin_results = {}
+
+    for bins_name, bin_counts in BIN_VERSIONS:
+        print(
+            f"\nTesting combined matching with bin version: {bins_name} ({bin_counts} bins)"
+        )
+        matcher = CardMatcher(bin_version=bins_name)
+
+        if len(matcher.database) == 0:
+            print("No database loaded!")
+            return
+
+        # Get test images in proper order
+        generations_dir = Path("./data/generations")
+        test_images = list(generations_dir.glob("*.png"))
+        test_images.sort()
+
+        if not test_images:
+            print("No test images found in ./data/generations/")
+            return
+
+        print(f"Testing combined pipeline on {len(test_images)} generated images...")
+
+        results = []
+
+        # Load generations metadata for ground truth
+        metadata_path = Path("./data/generations.json")
+        metadata = {}
+        if metadata_path.exists():
+            with open(metadata_path, "r") as f:
+                metadata = json.load(f)
+
+        corners_dict = {}
+        if metadata_path.exists():
+            with open(metadata_path, "r") as f:
+                metadata = json.load(f)
+                for k, v in metadata.items():
+                    if "corners" in v:
+                        corners_dict[k] = np.array(v["corners"], dtype=np.float32)
+
+        for img_path in test_images:
+            card, normalized, corners, top_matches = matcher.process_image(
+                str(img_path), display=False, match_func="combined"
+            )
+
+            detected = False
+            matched = card is not None
+
+            # Check against ground truth
+            image_key = img_path.stem
+            truth_group = metadata.get(image_key, {})
+            ground_truth = (truth_group.get("name", None), truth_group.get("set", None))
+
+            is_correct_overall = (card == ground_truth) if card else False
+
+            correct_in_top5 = (
+                any(match["card"] == ground_truth for match in top_matches)
+                if top_matches is not None and ground_truth[0] is not None
+                else False
+            )
+
+            gt_corners = corners_dict.get(image_key)
+            if corners is not None and gt_corners is not None:
+                loss, _ = compute_polygon_loss(corners, gt_corners)
+                detected = loss <= 20
+
+            is_correct_detected = (card == ground_truth) if card and detected else False
+
+            correct_in_top5_detected = (
+                any(match["card"] == ground_truth for match in top_matches)
+                if detected and top_matches is not None and ground_truth[0] is not None
+                else False
+            )
+
+            results.append(
+                {
+                    "image": img_path.name,
+                    "image_key": image_key,
+                    "detected": detected,
+                    "matched": card is not None,
+                    "card": card,
+                    "ground_truth": ground_truth,
+                    "correct": is_correct_overall,
+                    "correct_detected": is_correct_detected,
+                    "correct_in_top5": correct_in_top5,
+                    "correct_in_top5_detected": correct_in_top5_detected,
+                }
+            )
+
+        # Print summary
+        detected = sum(1 for r in results if r["detected"])
+        correct = sum(1 for r in results if r["correct"])
+        correct_detected = sum(1 for r in results if r["correct_detected"])
+        correct_in_top5_count = sum(1 for r in results if r["correct_in_top5"])
+        correct_in_top5_count_detected = sum(
+            1 for r in results if r["correct_in_top5_detected"]
+        )
+
+        bin_results[bins_name] = {
+            "bins_name": bins_name,
+            "bin_counts": bin_counts,
+            "detected": detected,
+            "correct": correct,
+            "correct_detected": correct_detected,
+            "correct_in_top5": correct_in_top5_count,
+            "correct_in_top5_detected": correct_in_top5_count_detected,
+            "total": len(results),
+        }
+
+        print(f"\nSUMMARY for bin version {bins_name} ({bin_counts}):")
+        print(
+            f"  Detection: {detected}/{len(results)} successful ({detected/len(results)*100:.1f}%)"
+        )
+        print(
+            f"  Accuracy (on detected cards): {correct_detected}/{detected} correct ({correct_detected/detected*100:.1f}%)"
+        )
+        print(
+            f"  Correct in Top-5 (in detected cards): {correct_in_top5_count_detected}/{detected} ({correct_in_top5_count_detected/detected*100:.1f}%)"
+        )
+        print(
+            f"  Correct in Top-5 (overall): {correct_in_top5_count}/{len(results)} ({correct_in_top5_count/len(results)*100:.1f}%)"
+        )
+        print(
+            f"  Overall accuracy: {correct}/{len(results)} correct ({correct/len(results)*100:.1f}%)"
+        )
+
+    with open("./data/combined_bin_results.json", "w") as f:
+        json.dump(bin_results, f, indent=4)
+
+    print("\nResults saved to ./data/combined_bin_results.json")
+
+
 if __name__ == "__main__":
     main_perceptual()
+    # main_combined()

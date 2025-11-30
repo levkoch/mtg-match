@@ -6,9 +6,12 @@
             8,
             8
         ],
-        "detected": 722,
-        "matched": 800,
-        "correct": 296,
+        "detected": 660,
+        "matched": 755,
+        "correct": 217,
+        "correct_detected": 208,
+        "correct_in_top5": 300,
+        "correct_in_top5_detected": 279,
         "total": 800
     },
     "bin_B": {
@@ -18,9 +21,12 @@
             16,
             16
         ],
-        "detected": 722,
-        "matched": 800,
-        "correct": 233,
+        "detected": 660,
+        "matched": 755,
+        "correct": 103,
+        "correct_detected": 92,
+        "correct_in_top5": 216,
+        "correct_in_top5_detected": 196,
         "total": 800
     },
     "bin_C": {
@@ -30,9 +36,12 @@
             8,
             8
         ],
-        "detected": 722,
-        "matched": 800,
-        "correct": 365,
+        "detected": 660,
+        "matched": 755,
+        "correct": 244,
+        "correct_detected": 225,
+        "correct_in_top5": 310,
+        "correct_in_top5_detected": 284,
         "total": 800
     },
     "bin_D": {
@@ -42,9 +51,12 @@
             8,
             8
         ],
-        "detected": 722,
-        "matched": 800,
-        "correct": 376,
+        "detected": 660,
+        "matched": 755,
+        "correct": 245,
+        "correct_detected": 226,
+        "correct_in_top5": 309,
+        "correct_in_top5_detected": 283,
         "total": 800
     },
     "bin_E": {
@@ -54,9 +66,12 @@
             4,
             4
         ],
-        "detected": 722,
-        "matched": 800,
-        "correct": 299,
+        "detected": 660,
+        "matched": 755,
+        "correct": 268,
+        "correct_detected": 260,
+        "correct_in_top5": 391,
+        "correct_in_top5_detected": 371,
         "total": 800
     },
     "bin_F": {
@@ -66,9 +81,12 @@
             4,
             4
         ],
-        "detected": 722,
-        "matched": 800,
-        "correct": 412,
+        "detected": 660,
+        "matched": 755,
+        "correct": 363,
+        "correct_detected": 346,
+        "correct_in_top5": 447,
+        "correct_in_top5_detected": 420,
         "total": 800
     },
     "bin_G": {
@@ -78,9 +96,12 @@
             4,
             4
         ],
-        "detected": 722,
-        "matched": 800,
-        "correct": 454,
+        "detected": 660,
+        "matched": 755,
+        "correct": 416,
+        "correct_detected": 395,
+        "correct_in_top5": 528,
+        "correct_in_top5_detected": 497,
         "total": 800
     }
 }

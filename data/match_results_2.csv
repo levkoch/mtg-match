@@ -1,0 +1,801 @@
+image,predicted,ground_truth,correct,detected,matched
+c100bg1.png,"Ultros, Obnoxious Octopus","Ultros, Obnoxious Octopus",1,1,1
+c100bg2.png,Dimir Informant,"Ultros, Obnoxious Octopus",0,1,1
+c100bg3.png,Dimir Informant,"Ultros, Obnoxious Octopus",0,1,1
+c100bg4.png,Dimir Informant,"Ultros, Obnoxious Octopus",0,1,1
+c100bg5.png,"Ultros, Obnoxious Octopus","Ultros, Obnoxious Octopus",1,1,1
+c100bg6.png,"Ultros, Obnoxious Octopus","Ultros, Obnoxious Octopus",1,1,1
+c100bg7.png,"Ultros, Obnoxious Octopus","Ultros, Obnoxious Octopus",1,1,1
+c100bg8.png,"Ultros, Obnoxious Octopus","Ultros, Obnoxious Octopus",1,1,1
+c10bg1.png,Gorehorn Minotaurs,Gorehorn Minotaurs,1,1,1
+c10bg2.png,Gorehorn Minotaurs,Gorehorn Minotaurs,1,1,1
+c10bg3.png,Gorehorn Minotaurs,Gorehorn Minotaurs,1,1,1
+c10bg4.png,Gorehorn Minotaurs,Gorehorn Minotaurs,1,1,1
+c10bg5.png,Gorehorn Minotaurs,Gorehorn Minotaurs,1,1,1
+c10bg6.png,Gorehorn Minotaurs,Gorehorn Minotaurs,1,1,1
+c10bg7.png,Gorehorn Minotaurs,Gorehorn Minotaurs,1,1,1
+c10bg8.png,Gorehorn Minotaurs,Gorehorn Minotaurs,1,1,1
+c11bg1.png,No match,"Elenda, Saint of Dusk",0,0,0
+c11bg2.png,No match,"Elenda, Saint of Dusk",0,0,0
+c11bg3.png,No match,"Elenda, Saint of Dusk",0,0,0
+c11bg4.png,Cat,"Elenda, Saint of Dusk",0,0,1
+c11bg5.png,No match,"Elenda, Saint of Dusk",0,0,0
+c11bg6.png,No match,"Elenda, Saint of Dusk",0,0,0
+c11bg7.png,No match,"Elenda, Saint of Dusk",0,0,0
+c11bg8.png,Arid Mesa,"Elenda, Saint of Dusk",0,0,1
+c12bg1.png,Snuff Out,Snuff Out,1,1,1
+c12bg2.png,Snuff Out,Snuff Out,1,1,1
+c12bg3.png,Snuff Out,Snuff Out,1,1,1
+c12bg4.png,Snuff Out,Snuff Out,1,1,1
+c12bg5.png,Snuff Out,Snuff Out,1,1,1
+c12bg6.png,Snuff Out,Snuff Out,1,1,1
+c12bg7.png,Snuff Out,Snuff Out,1,1,1
+c12bg8.png,Snuff Out,Snuff Out,1,0,1
+c13bg1.png,Dismal Backwater,Dismal Backwater,1,1,1
+c13bg2.png,Dismal Backwater,Dismal Backwater,1,1,1
+c13bg3.png,Dismal Backwater,Dismal Backwater,1,1,1
+c13bg4.png,Dismal Backwater,Dismal Backwater,1,1,1
+c13bg5.png,Dismal Backwater,Dismal Backwater,1,1,1
+c13bg6.png,Dismal Backwater,Dismal Backwater,1,1,1
+c13bg7.png,Dismal Backwater,Dismal Backwater,1,1,1
+c13bg8.png,Dismal Backwater,Dismal Backwater,1,1,1
+c14bg1.png,Fear of Death,Fear of Death,1,1,1
+c14bg2.png,Fear of Death,Fear of Death,1,1,1
+c14bg3.png,Fear of Death,Fear of Death,1,1,1
+c14bg4.png,Fear of Death,Fear of Death,1,1,1
+c14bg5.png,Fear of Death,Fear of Death,1,1,1
+c14bg6.png,Fear of Death,Fear of Death,1,1,1
+c14bg7.png,Fear of Death,Fear of Death,1,1,1
+c14bg8.png,Strionic Resonator,Fear of Death,0,0,1
+c15bg1.png,Consume Spirit,Skullsnatcher,0,1,1
+c15bg2.png,Skullsnatcher,Skullsnatcher,1,1,1
+c15bg3.png,Skullsnatcher,Skullsnatcher,1,1,1
+c15bg4.png,Skullsnatcher,Skullsnatcher,1,1,1
+c15bg5.png,Skullsnatcher,Skullsnatcher,1,1,1
+c15bg6.png,Skullsnatcher,Skullsnatcher,1,1,1
+c15bg7.png,Skullsnatcher,Skullsnatcher,1,1,1
+c15bg8.png,Awaken the Honored Dead,Skullsnatcher,0,0,1
+c16bg1.png,Shivan Reef,Spitting Earth,0,0,1
+c16bg2.png,Mishra's Foundry,Spitting Earth,0,0,1
+c16bg3.png,Mishra's Foundry,Spitting Earth,0,0,1
+c16bg4.png,Mishra's Foundry,Spitting Earth,0,0,1
+c16bg5.png,Spitting Earth,Spitting Earth,1,1,1
+c16bg6.png,Spitting Earth,Spitting Earth,1,1,1
+c16bg7.png,Mishra's Foundry,Spitting Earth,0,0,1
+c16bg8.png,Spitting Earth,Spitting Earth,1,1,1
+c17bg1.png,"Leela, Sevateem Warrior","Leela, Sevateem Warrior",1,1,1
+c17bg2.png,"Leela, Sevateem Warrior","Leela, Sevateem Warrior",1,1,1
+c17bg3.png,"Leela, Sevateem Warrior","Leela, Sevateem Warrior",1,1,1
+c17bg4.png,"Leela, Sevateem Warrior","Leela, Sevateem Warrior",1,1,1
+c17bg5.png,"Leela, Sevateem Warrior","Leela, Sevateem Warrior",1,1,1
+c17bg6.png,"Leela, Sevateem Warrior","Leela, Sevateem Warrior",1,1,1
+c17bg7.png,"Leela, Sevateem Warrior","Leela, Sevateem Warrior",1,1,1
+c17bg8.png,"Leela, Sevateem Warrior","Leela, Sevateem Warrior",1,1,1
+c18bg1.png,Malfegor,Malfegor,1,1,1
+c18bg2.png,Malfegor,Malfegor,1,1,1
+c18bg3.png,Malfegor,Malfegor,1,1,1
+c18bg4.png,Malfegor,Malfegor,1,1,1
+c18bg5.png,Malfegor,Malfegor,1,1,1
+c18bg6.png,Malfegor,Malfegor,1,1,1
+c18bg7.png,Malfegor,Malfegor,1,1,1
+c18bg8.png,Malfegor,Malfegor,1,1,1
+c19bg1.png,Groundbreaker,Groundbreaker,1,1,1
+c19bg2.png,Groundbreaker,Groundbreaker,1,1,1
+c19bg3.png,Groundbreaker,Groundbreaker,1,1,1
+c19bg4.png,Groundbreaker,Groundbreaker,1,1,1
+c19bg5.png,Groundbreaker,Groundbreaker,1,1,1
+c19bg6.png,Groundbreaker,Groundbreaker,1,1,1
+c19bg7.png,Groundbreaker,Groundbreaker,1,1,1
+c19bg8.png,Groundbreaker,Groundbreaker,1,1,1
+c1bg1.png,Unholy Strength,Unholy Strength,1,1,1
+c1bg2.png,Unholy Strength,Unholy Strength,1,1,1
+c1bg3.png,Unholy Strength,Unholy Strength,1,1,1
+c1bg4.png,Unholy Strength,Unholy Strength,1,1,1
+c1bg5.png,Unholy Strength,Unholy Strength,1,1,1
+c1bg6.png,Unholy Strength,Unholy Strength,1,1,1
+c1bg7.png,Unholy Strength,Unholy Strength,1,1,1
+c1bg8.png,Unholy Strength,Unholy Strength,1,1,1
+c20bg1.png,Urge to Feed,Urge to Feed,1,1,1
+c20bg2.png,Urge to Feed,Urge to Feed,1,1,1
+c20bg3.png,Urge to Feed,Urge to Feed,1,1,1
+c20bg4.png,Urge to Feed,Urge to Feed,1,1,1
+c20bg5.png,Urge to Feed,Urge to Feed,1,1,1
+c20bg6.png,Urge to Feed,Urge to Feed,1,1,1
+c20bg7.png,Urge to Feed,Urge to Feed,1,1,1
+c20bg8.png,Urge to Feed,Urge to Feed,1,1,1
+c21bg1.png,Eyekite,Eyekite,1,1,1
+c21bg2.png,Eyekite,Eyekite,1,1,1
+c21bg3.png,Eyekite,Eyekite,1,1,1
+c21bg4.png,Eyekite,Eyekite,1,1,1
+c21bg5.png,Eyekite,Eyekite,1,1,1
+c21bg6.png,Eyekite,Eyekite,1,1,1
+c21bg7.png,Eyekite,Eyekite,1,1,1
+c21bg8.png,Eyekite,Eyekite,1,1,1
+c22bg1.png,Lunarch Mantle,Lunarch Mantle,1,1,1
+c22bg2.png,Lunarch Mantle,Lunarch Mantle,1,1,1
+c22bg3.png,Lunarch Mantle,Lunarch Mantle,1,1,1
+c22bg4.png,Lunarch Mantle,Lunarch Mantle,1,1,1
+c22bg5.png,Lunarch Mantle,Lunarch Mantle,1,1,1
+c22bg6.png,Lunarch Mantle,Lunarch Mantle,1,1,1
+c22bg7.png,Lunarch Mantle,Lunarch Mantle,1,1,1
+c22bg8.png,Lunarch Mantle,Lunarch Mantle,1,0,1
+c23bg1.png,Mana Flare,War Mammoth,0,0,1
+c23bg2.png,Mana Flare,War Mammoth,0,1,1
+c23bg3.png,Hraesvelgr of the First Brood,War Mammoth,0,0,1
+c23bg4.png,Mana Flare,War Mammoth,0,0,1
+c23bg5.png,War Mammoth,War Mammoth,1,1,1
+c23bg6.png,War Mammoth,War Mammoth,1,1,1
+c23bg7.png,Mana Flare,War Mammoth,0,0,1
+c23bg8.png,War Mammoth,War Mammoth,1,1,1
+c24bg1.png,Avishkar Raceway,Avishkar Raceway,1,1,1
+c24bg2.png,Avishkar Raceway,Avishkar Raceway,1,1,1
+c24bg3.png,Avishkar Raceway,Avishkar Raceway,1,1,1
+c24bg4.png,Avishkar Raceway,Avishkar Raceway,1,1,1
+c24bg5.png,Avishkar Raceway,Avishkar Raceway,1,1,1
+c24bg6.png,Avishkar Raceway,Avishkar Raceway,1,1,1
+c24bg7.png,Avishkar Raceway,Avishkar Raceway,1,1,1
+c24bg8.png,Clerics,Avishkar Raceway,0,0,1
+c25bg1.png,No match,Pip-Boy 3000,0,0,0
+c25bg2.png,Pip-Boy 3000,Pip-Boy 3000,1,1,1
+c25bg3.png,No match,Pip-Boy 3000,0,0,0
+c25bg4.png,No match,Pip-Boy 3000,0,0,0
+c25bg5.png,No match,Pip-Boy 3000,0,0,0
+c25bg6.png,No match,Pip-Boy 3000,0,0,0
+c25bg7.png,Pip-Boy 3000,Pip-Boy 3000,1,1,1
+c25bg8.png,No match,Pip-Boy 3000,0,0,0
+c26bg1.png,"Elesh Norn, Grand Cenobite","Elesh Norn, Grand Cenobite",1,1,1
+c26bg2.png,"Elesh Norn, Grand Cenobite","Elesh Norn, Grand Cenobite",1,1,1
+c26bg3.png,"Elesh Norn, Grand Cenobite","Elesh Norn, Grand Cenobite",1,1,1
+c26bg4.png,"Elesh Norn, Grand Cenobite","Elesh Norn, Grand Cenobite",1,1,1
+c26bg5.png,"Elesh Norn, Grand Cenobite","Elesh Norn, Grand Cenobite",1,1,1
+c26bg6.png,"Elesh Norn, Grand Cenobite","Elesh Norn, Grand Cenobite",1,1,1
+c26bg7.png,"Elesh Norn, Grand Cenobite","Elesh Norn, Grand Cenobite",1,1,1
+c26bg8.png,"Elesh Norn, Grand Cenobite","Elesh Norn, Grand Cenobite",1,1,1
+c27bg1.png,Mahamoti Djinn,Mahamoti Djinn,1,1,1
+c27bg2.png,Brokers Ascendancy,Mahamoti Djinn,0,1,1
+c27bg3.png,"Sting, the Glinting Dagger",Mahamoti Djinn,0,1,1
+c27bg4.png,"Sting, the Glinting Dagger",Mahamoti Djinn,0,1,1
+c27bg5.png,Brokers Ascendancy,Mahamoti Djinn,0,1,1
+c27bg6.png,Mystic Retrieval,Mahamoti Djinn,0,1,1
+c27bg7.png,"Sting, the Glinting Dagger",Mahamoti Djinn,0,1,1
+c27bg8.png,Very Cryptic Command,Mahamoti Djinn,0,1,1
+c28bg1.png,No match,Staff of the Storyteller,0,0,0
+c28bg2.png,Staff of the Storyteller,Staff of the Storyteller,1,1,1
+c28bg3.png,Staff of the Storyteller,Staff of the Storyteller,1,1,1
+c28bg4.png,No match,Staff of the Storyteller,0,0,0
+c28bg5.png,No match,Staff of the Storyteller,0,0,0
+c28bg6.png,No match,Staff of the Storyteller,0,0,0
+c28bg7.png,Staff of the Storyteller,Staff of the Storyteller,1,1,1
+c28bg8.png,No match,Staff of the Storyteller,0,0,0
+c29bg1.png,Dragon Egg,Roving Actuator,0,1,1
+c29bg2.png,Roving Actuator,Roving Actuator,1,1,1
+c29bg3.png,Roving Actuator,Roving Actuator,1,1,1
+c29bg4.png,Roving Actuator,Roving Actuator,1,1,1
+c29bg5.png,Dragon Egg,Roving Actuator,0,1,1
+c29bg6.png,Roving Actuator,Roving Actuator,1,1,1
+c29bg7.png,Roving Actuator,Roving Actuator,1,1,1
+c29bg8.png,Roving Actuator,Roving Actuator,1,1,1
+c2bg1.png,Queen Marchesa,Argentum Armor,0,1,1
+c2bg2.png,Argentum Armor,Argentum Armor,1,1,1
+c2bg3.png,Queen Marchesa,Argentum Armor,0,1,1
+c2bg4.png,Argentum Armor,Argentum Armor,1,1,1
+c2bg5.png,Argentum Armor,Argentum Armor,1,1,1
+c2bg6.png,Repel the Darkness,Argentum Armor,0,1,1
+c2bg7.png,Argentum Armor,Argentum Armor,1,1,1
+c2bg8.png,Professor Onyx,Argentum Armor,0,0,1
+c30bg1.png,Conclave Naturalists,Conclave Naturalists,1,1,1
+c30bg2.png,Conclave Naturalists,Conclave Naturalists,1,1,1
+c30bg3.png,Conclave Naturalists,Conclave Naturalists,1,1,1
+c30bg4.png,Conclave Naturalists,Conclave Naturalists,1,1,1
+c30bg5.png,Conclave Naturalists,Conclave Naturalists,1,1,1
+c30bg6.png,Conclave Naturalists,Conclave Naturalists,1,1,1
+c30bg7.png,Conclave Naturalists,Conclave Naturalists,1,1,1
+c30bg8.png,Conclave Naturalists,Conclave Naturalists,1,1,1
+c31bg1.png,War Squeak,War Squeak,1,1,1
+c31bg2.png,War Squeak,War Squeak,1,1,1
+c31bg3.png,War Squeak,War Squeak,1,1,1
+c31bg4.png,War Squeak,War Squeak,1,1,1
+c31bg5.png,War Squeak,War Squeak,1,1,1
+c31bg6.png,War Squeak,War Squeak,1,1,1
+c31bg7.png,War Squeak,War Squeak,1,1,1
+c31bg8.png,War Squeak,War Squeak,1,1,1
+c32bg1.png,Jade Statue,Jade Statue,1,1,1
+c32bg2.png,Jade Statue,Jade Statue,1,1,1
+c32bg3.png,Jade Statue,Jade Statue,1,1,1
+c32bg4.png,Cyclopean Tomb,Jade Statue,0,1,1
+c32bg5.png,"Prossh, Skyraider of Kher",Jade Statue,0,0,1
+c32bg6.png,Snow Hound,Jade Statue,0,1,1
+c32bg7.png,Jade Statue,Jade Statue,1,1,1
+c32bg8.png,Enlightened Tutor,Jade Statue,0,0,1
+c33bg1.png,Sylvan Scavenging,Krosan Verge,0,0,1
+c33bg2.png,Krosan Verge,Krosan Verge,1,1,1
+c33bg3.png,Mind Stone,Krosan Verge,0,0,1
+c33bg4.png,Circle of Protection: Green,Krosan Verge,0,0,1
+c33bg5.png,"Squall, SeeD Mercenary",Krosan Verge,0,0,1
+c33bg6.png,Echoing Boon,Krosan Verge,0,0,1
+c33bg7.png,Krosan Verge,Krosan Verge,1,1,1
+c33bg8.png,Krosan Verge,Krosan Verge,1,1,1
+c34bg1.png,"Titania, Gaea Incarnate","Titania, Gaea Incarnate",1,1,1
+c34bg2.png,"Titania, Gaea Incarnate","Titania, Gaea Incarnate",1,1,1
+c34bg3.png,Double-Faced Substitute Card,"Titania, Gaea Incarnate",0,0,1
+c34bg4.png,"Titania, Gaea Incarnate","Titania, Gaea Incarnate",1,1,1
+c34bg5.png,"Titania, Gaea Incarnate","Titania, Gaea Incarnate",1,1,1
+c34bg6.png,"Titania, Gaea Incarnate","Titania, Gaea Incarnate",1,1,1
+c34bg7.png,"Titania, Gaea Incarnate","Titania, Gaea Incarnate",1,1,1
+c34bg8.png,No match,"Titania, Gaea Incarnate",0,0,0
+c35bg1.png,Fog Bank,Fog Bank,1,1,1
+c35bg2.png,Fog Bank,Fog Bank,1,1,1
+c35bg3.png,Fog Bank,Fog Bank,1,1,1
+c35bg4.png,Fog Bank,Fog Bank,1,1,1
+c35bg5.png,Fog Bank,Fog Bank,1,1,1
+c35bg6.png,Fog Bank,Fog Bank,1,1,1
+c35bg7.png,Fog Bank,Fog Bank,1,1,1
+c35bg8.png,Origin of the Hidden Ones,Fog Bank,0,0,1
+c36bg1.png,Unholy Strength,Unholy Strength,1,1,1
+c36bg2.png,Unholy Strength,Unholy Strength,1,1,1
+c36bg3.png,Unholy Strength,Unholy Strength,1,1,1
+c36bg4.png,Unholy Strength,Unholy Strength,1,1,1
+c36bg5.png,Unholy Strength,Unholy Strength,1,1,1
+c36bg6.png,Unholy Strength,Unholy Strength,1,1,1
+c36bg7.png,Unholy Strength,Unholy Strength,1,1,1
+c36bg8.png,Unholy Strength,Unholy Strength,1,1,1
+c37bg1.png,Elvish Spirit Guide,Elvish Spirit Guide,1,1,1
+c37bg2.png,Elvish Spirit Guide,Elvish Spirit Guide,1,1,1
+c37bg3.png,Elvish Spirit Guide,Elvish Spirit Guide,1,1,1
+c37bg4.png,Elvish Spirit Guide,Elvish Spirit Guide,1,1,1
+c37bg5.png,Elvish Spirit Guide,Elvish Spirit Guide,1,1,1
+c37bg6.png,Elvish Spirit Guide,Elvish Spirit Guide,1,1,1
+c37bg7.png,Elvish Spirit Guide,Elvish Spirit Guide,1,1,1
+c37bg8.png,Elvish Spirit Guide,Elvish Spirit Guide,1,1,1
+c38bg1.png,Aura Thief,Aura Thief,1,1,1
+c38bg2.png,Aura Thief,Aura Thief,1,1,1
+c38bg3.png,Aura Thief,Aura Thief,1,1,1
+c38bg4.png,Aura Thief,Aura Thief,1,1,1
+c38bg5.png,Aura Thief,Aura Thief,1,1,1
+c38bg6.png,Aura Thief,Aura Thief,1,1,1
+c38bg7.png,Aura Thief,Aura Thief,1,1,1
+c38bg8.png,Aura Thief,Aura Thief,1,1,1
+c39bg1.png,Mist-Cloaked Herald,Mist-Cloaked Herald,1,1,1
+c39bg2.png,Mist-Cloaked Herald,Mist-Cloaked Herald,1,1,1
+c39bg3.png,Mist-Cloaked Herald,Mist-Cloaked Herald,1,1,1
+c39bg4.png,Mist-Cloaked Herald,Mist-Cloaked Herald,1,1,1
+c39bg5.png,Mist-Cloaked Herald,Mist-Cloaked Herald,1,1,1
+c39bg6.png,Mist-Cloaked Herald,Mist-Cloaked Herald,1,1,1
+c39bg7.png,Mist-Cloaked Herald,Mist-Cloaked Herald,1,1,1
+c39bg8.png,Rogue Class,Mist-Cloaked Herald,0,0,1
+c3bg1.png,Urza's Blueprints,Urza's Blueprints,1,1,1
+c3bg2.png,Urza's Blueprints,Urza's Blueprints,1,1,1
+c3bg3.png,Urza's Blueprints,Urza's Blueprints,1,1,1
+c3bg4.png,Urza's Blueprints,Urza's Blueprints,1,1,1
+c3bg5.png,Urza's Blueprints,Urza's Blueprints,1,1,1
+c3bg6.png,Urza's Blueprints,Urza's Blueprints,1,1,1
+c3bg7.png,Urza's Blueprints,Urza's Blueprints,1,1,1
+c3bg8.png,Urza's Blueprints,Urza's Blueprints,1,1,1
+c40bg1.png,Fiery Emancipation,Fiery Emancipation,1,1,1
+c40bg2.png,Fiery Emancipation,Fiery Emancipation,1,1,1
+c40bg3.png,Fiery Emancipation,Fiery Emancipation,1,1,1
+c40bg4.png,Fiery Emancipation,Fiery Emancipation,1,1,1
+c40bg5.png,Fiery Emancipation,Fiery Emancipation,1,1,1
+c40bg6.png,Fiery Emancipation,Fiery Emancipation,1,1,1
+c40bg7.png,Fiery Emancipation,Fiery Emancipation,1,1,1
+c40bg8.png,Fiery Emancipation,Fiery Emancipation,1,1,1
+c41bg1.png,Victimize,Victimize,1,1,1
+c41bg2.png,Victimize,Victimize,1,1,1
+c41bg3.png,Victimize,Victimize,1,1,1
+c41bg4.png,Victimize,Victimize,1,1,1
+c41bg5.png,Victimize,Victimize,1,1,1
+c41bg6.png,Victimize,Victimize,1,1,1
+c41bg7.png,Victimize,Victimize,1,1,1
+c41bg8.png,Pact of Negation,Victimize,0,0,1
+c42bg1.png,Manalith,Manalith,1,1,1
+c42bg2.png,Manalith,Manalith,1,1,1
+c42bg3.png,Manalith,Manalith,1,1,1
+c42bg4.png,Manalith,Manalith,1,1,1
+c42bg5.png,Manalith,Manalith,1,1,1
+c42bg6.png,Manalith,Manalith,1,1,1
+c42bg7.png,Manalith,Manalith,1,1,1
+c42bg8.png,Manalith,Manalith,1,1,1
+c43bg1.png,Pyroclast Consul,Pyroclast Consul,1,1,1
+c43bg2.png,Pyroclast Consul,Pyroclast Consul,1,1,1
+c43bg3.png,Pyroclast Consul,Pyroclast Consul,1,1,1
+c43bg4.png,Pyroclast Consul,Pyroclast Consul,1,1,1
+c43bg5.png,Pyroclast Consul,Pyroclast Consul,1,1,1
+c43bg6.png,Pyroclast Consul,Pyroclast Consul,1,1,1
+c43bg7.png,Pyroclast Consul,Pyroclast Consul,1,1,1
+c43bg8.png,Pyroclast Consul,Pyroclast Consul,1,1,1
+c44bg1.png,Jackal Familiar,Jackal Familiar,1,1,1
+c44bg2.png,Jackal Familiar,Jackal Familiar,1,1,1
+c44bg3.png,Jackal Familiar,Jackal Familiar,1,1,1
+c44bg4.png,Jackal Familiar,Jackal Familiar,1,1,1
+c44bg5.png,Jackal Familiar,Jackal Familiar,1,1,1
+c44bg6.png,Jackal Familiar,Jackal Familiar,1,1,1
+c44bg7.png,Jackal Familiar,Jackal Familiar,1,1,1
+c44bg8.png,Jackal Familiar,Jackal Familiar,1,1,1
+c45bg1.png,Somber Hoverguard,Somber Hoverguard,1,1,1
+c45bg2.png,Somber Hoverguard,Somber Hoverguard,1,1,1
+c45bg3.png,Somber Hoverguard,Somber Hoverguard,1,1,1
+c45bg4.png,Somber Hoverguard,Somber Hoverguard,1,1,1
+c45bg5.png,Somber Hoverguard,Somber Hoverguard,1,1,1
+c45bg6.png,Somber Hoverguard,Somber Hoverguard,1,1,1
+c45bg7.png,Somber Hoverguard,Somber Hoverguard,1,1,1
+c45bg8.png,Somber Hoverguard,Somber Hoverguard,1,0,1
+c46bg1.png,Cathar Commando,Swamp,0,0,1
+c46bg2.png,Armageddon,Swamp,0,0,1
+c46bg3.png,Armageddon,Swamp,0,0,1
+c46bg4.png,Armageddon,Swamp,0,0,1
+c46bg5.png,Swamp,Swamp,1,1,1
+c46bg6.png,Swamp,Swamp,1,1,1
+c46bg7.png,Armageddon,Swamp,0,0,1
+c46bg8.png,Swamp,Swamp,1,1,1
+c47bg1.png,"Jaya Ballard, Task Mage","Jaya Ballard, Task Mage",1,1,1
+c47bg2.png,"Jaya Ballard, Task Mage","Jaya Ballard, Task Mage",1,1,1
+c47bg3.png,"Jaya Ballard, Task Mage","Jaya Ballard, Task Mage",1,1,1
+c47bg4.png,"Jaya Ballard, Task Mage","Jaya Ballard, Task Mage",1,1,1
+c47bg5.png,"Jaya Ballard, Task Mage","Jaya Ballard, Task Mage",1,1,1
+c47bg6.png,"Jaya Ballard, Task Mage","Jaya Ballard, Task Mage",1,1,1
+c47bg7.png,"Jaya Ballard, Task Mage","Jaya Ballard, Task Mage",1,1,1
+c47bg8.png,Ascent of the Worthy,"Jaya Ballard, Task Mage",0,0,1
+c48bg1.png,Storm Entity,Storm Entity,1,1,1
+c48bg2.png,Storm Entity,Storm Entity,1,1,1
+c48bg3.png,Storm Entity,Storm Entity,1,1,1
+c48bg4.png,Storm Entity,Storm Entity,1,1,1
+c48bg5.png,Storm Entity,Storm Entity,1,1,1
+c48bg6.png,Storm Entity,Storm Entity,1,1,1
+c48bg7.png,Storm Entity,Storm Entity,1,1,1
+c48bg8.png,Storm Entity,Storm Entity,1,1,1
+c49bg1.png,No match,Liliana of the Dark Realms,0,0,0
+c49bg2.png,No match,Liliana of the Dark Realms,0,0,0
+c49bg3.png,No match,Liliana of the Dark Realms,0,0,0
+c49bg4.png,Stack of Paperwork,Liliana of the Dark Realms,0,0,1
+c49bg5.png,Timber Wolves,Liliana of the Dark Realms,0,0,1
+c49bg6.png,Cordyceps Infected,Liliana of the Dark Realms,0,0,1
+c49bg7.png,No match,Liliana of the Dark Realms,0,0,0
+c49bg8.png,Krosa,Liliana of the Dark Realms,0,0,1
+c4bg1.png,Bird Maiden,Curse of Unbinding,0,0,1
+c4bg2.png,Curse of Unbinding,Curse of Unbinding,1,1,1
+c4bg3.png,Curse of Unbinding,Curse of Unbinding,1,1,1
+c4bg4.png,Island,Curse of Unbinding,0,0,1
+c4bg5.png,Bird Maiden,Curse of Unbinding,0,0,1
+c4bg6.png,Island,Curse of Unbinding,0,0,1
+c4bg7.png,Curse of Unbinding,Curse of Unbinding,1,1,1
+c4bg8.png,Adarkar Wastes,Curse of Unbinding,0,0,1
+c50bg1.png,Shivan Hellkite,Shivan Hellkite,1,1,1
+c50bg2.png,Shivan Hellkite,Shivan Hellkite,1,1,1
+c50bg3.png,Shivan Hellkite,Shivan Hellkite,1,1,1
+c50bg4.png,Shivan Hellkite,Shivan Hellkite,1,1,1
+c50bg5.png,Shivan Hellkite,Shivan Hellkite,1,1,1
+c50bg6.png,Shivan Hellkite,Shivan Hellkite,1,1,1
+c50bg7.png,Shivan Hellkite,Shivan Hellkite,1,1,1
+c50bg8.png,Shivan Hellkite,Shivan Hellkite,1,0,1
+c51bg1.png,Battle Myrsphere,Blooming Blast,0,1,1
+c51bg2.png,Battle Myrsphere,Blooming Blast,0,1,1
+c51bg3.png,Battle Myrsphere,Blooming Blast,0,1,1
+c51bg4.png,Blooming Blast,Blooming Blast,1,1,1
+c51bg5.png,Battle Myrsphere,Blooming Blast,0,1,1
+c51bg6.png,Battle Myrsphere,Blooming Blast,0,1,1
+c51bg7.png,Battle Myrsphere,Blooming Blast,0,1,1
+c51bg8.png,Blooming Blast,Blooming Blast,1,1,1
+c52bg1.png,Isolated Chapel,Isolated Chapel,1,1,1
+c52bg2.png,Isolated Chapel,Isolated Chapel,1,1,1
+c52bg3.png,Isolated Chapel,Isolated Chapel,1,1,1
+c52bg4.png,Isolated Chapel,Isolated Chapel,1,1,1
+c52bg5.png,Isolated Chapel,Isolated Chapel,1,1,1
+c52bg6.png,Isolated Chapel,Isolated Chapel,1,1,1
+c52bg7.png,Isolated Chapel,Isolated Chapel,1,1,1
+c52bg8.png,Isolated Chapel,Isolated Chapel,1,1,1
+c53bg1.png,Selvala's Enforcer,Selvala's Enforcer,1,1,1
+c53bg2.png,Selvala's Enforcer,Selvala's Enforcer,1,1,1
+c53bg3.png,Selvala's Enforcer,Selvala's Enforcer,1,1,1
+c53bg4.png,Selvala's Enforcer,Selvala's Enforcer,1,1,1
+c53bg5.png,Selvala's Enforcer,Selvala's Enforcer,1,1,1
+c53bg6.png,Selvala's Enforcer,Selvala's Enforcer,1,1,1
+c53bg7.png,Selvala's Enforcer,Selvala's Enforcer,1,1,1
+c53bg8.png,Selvala's Enforcer,Selvala's Enforcer,1,1,1
+c54bg1.png,"Karador, Ghost Chieftain",Ghor-Clan Savage,0,0,1
+c54bg2.png,"Karador, Ghost Chieftain",Ghor-Clan Savage,0,0,1
+c54bg3.png,"Karador, Ghost Chieftain",Ghor-Clan Savage,0,0,1
+c54bg4.png,"Karador, Ghost Chieftain",Ghor-Clan Savage,0,0,1
+c54bg5.png,Ghor-Clan Savage,Ghor-Clan Savage,1,1,1
+c54bg6.png,Ghor-Clan Savage,Ghor-Clan Savage,1,1,1
+c54bg7.png,"Karador, Ghost Chieftain",Ghor-Clan Savage,0,0,1
+c54bg8.png,Ghor-Clan Savage,Ghor-Clan Savage,1,1,1
+c55bg1.png,Archon of Emeria,Abundant Harvest,0,0,1
+c55bg2.png,Abundant Harvest,Abundant Harvest,1,1,1
+c55bg3.png,No match,Abundant Harvest,0,0,0
+c55bg4.png,Stirring Wildwood,Abundant Harvest,0,0,1
+c55bg5.png,Archon of Emeria,Abundant Harvest,0,0,1
+c55bg6.png,Abundant Harvest,Abundant Harvest,1,1,1
+c55bg7.png,Abundant Harvest,Abundant Harvest,1,1,1
+c55bg8.png,Abundant Harvest,Abundant Harvest,1,0,1
+c56bg1.png,Taurean Mauler,Taurean Mauler,1,1,1
+c56bg2.png,Taurean Mauler,Taurean Mauler,1,1,1
+c56bg3.png,Taurean Mauler,Taurean Mauler,1,1,1
+c56bg4.png,Taurean Mauler,Taurean Mauler,1,1,1
+c56bg5.png,Taurean Mauler,Taurean Mauler,1,1,1
+c56bg6.png,Taurean Mauler,Taurean Mauler,1,1,1
+c56bg7.png,Taurean Mauler,Taurean Mauler,1,1,1
+c56bg8.png,Taurean Mauler,Taurean Mauler,1,1,1
+c57bg1.png,Quicksilver Fisher,Birds of Paradise,0,0,1
+c57bg2.png,Zombie Giant,Birds of Paradise,0,0,1
+c57bg3.png,Zombie Giant,Birds of Paradise,0,0,1
+c57bg4.png,Zombie Giant,Birds of Paradise,0,0,1
+c57bg5.png,Birds of Paradise,Birds of Paradise,1,1,1
+c57bg6.png,Birds of Paradise,Birds of Paradise,1,1,1
+c57bg7.png,Zombie Giant,Birds of Paradise,0,0,1
+c57bg8.png,Birds of Paradise,Birds of Paradise,1,1,1
+c58bg1.png,Snarespinner,Snarespinner,1,1,1
+c58bg2.png,Snarespinner,Snarespinner,1,1,1
+c58bg3.png,Snarespinner,Snarespinner,1,1,1
+c58bg4.png,Snarespinner,Snarespinner,1,1,1
+c58bg5.png,Snarespinner,Snarespinner,1,1,1
+c58bg6.png,Snarespinner,Snarespinner,1,1,1
+c58bg7.png,Snarespinner,Snarespinner,1,1,1
+c58bg8.png,Snarespinner,Snarespinner,1,1,1
+c59bg1.png,Nurturing Bristleback,Nurturing Bristleback,1,1,1
+c59bg2.png,Nurturing Bristleback,Nurturing Bristleback,1,1,1
+c59bg3.png,Nurturing Bristleback,Nurturing Bristleback,1,1,1
+c59bg4.png,Nurturing Bristleback,Nurturing Bristleback,1,1,1
+c59bg5.png,Nurturing Bristleback,Nurturing Bristleback,1,1,1
+c59bg6.png,Nurturing Bristleback,Nurturing Bristleback,1,1,1
+c59bg7.png,Nurturing Bristleback,Nurturing Bristleback,1,1,1
+c59bg8.png,Urborg,Nurturing Bristleback,0,0,1
+c5bg1.png,Cat,Vivi Ornitier,0,0,1
+c5bg2.png,No match,Vivi Ornitier,0,0,0
+c5bg3.png,"Orvar, the All-Form",Vivi Ornitier,0,0,1
+c5bg4.png,No match,Vivi Ornitier,0,0,0
+c5bg5.png,Case of the Gateway Express,Vivi Ornitier,0,0,1
+c5bg6.png,Engulfing Flames,Vivi Ornitier,0,0,1
+c5bg7.png,Fated Firepower,Vivi Ornitier,0,0,1
+c5bg8.png,Timber Wolves,Vivi Ornitier,0,0,1
+c60bg1.png,Coward // Killer,Coward // Killer,1,1,1
+c60bg2.png,Coward // Killer,Coward // Killer,1,1,1
+c60bg3.png,Coward // Killer,Coward // Killer,1,1,1
+c60bg4.png,Coward // Killer,Coward // Killer,1,1,1
+c60bg5.png,Coward // Killer,Coward // Killer,1,1,1
+c60bg6.png,Coward // Killer,Coward // Killer,1,1,1
+c60bg7.png,Coward // Killer,Coward // Killer,1,1,1
+c60bg8.png,Capture of Jingzhou,Coward // Killer,0,0,1
+c61bg1.png,Woodland Champion,Woodland Champion,0,1,1
+c61bg2.png,Woodland Champion,Woodland Champion,0,1,1
+c61bg3.png,Woodland Champion,Woodland Champion,1,1,1
+c61bg4.png,Woodland Champion,Woodland Champion,0,1,1
+c61bg5.png,Woodland Champion,Woodland Champion,1,1,1
+c61bg6.png,Woodland Champion,Woodland Champion,1,1,1
+c61bg7.png,Woodland Champion,Woodland Champion,0,1,1
+c61bg8.png,The War Games,Woodland Champion,0,0,1
+c62bg1.png,Faerie Rogue,Faerie Rogue,1,1,1
+c62bg2.png,Faerie Rogue,Faerie Rogue,1,1,1
+c62bg3.png,Faerie Rogue,Faerie Rogue,1,1,1
+c62bg4.png,Faerie Rogue,Faerie Rogue,1,1,1
+c62bg5.png,Faerie Rogue,Faerie Rogue,1,1,1
+c62bg6.png,Faerie Rogue,Faerie Rogue,1,1,1
+c62bg7.png,Faerie Rogue,Faerie Rogue,1,1,1
+c62bg8.png,Ascent of the Worthy,Faerie Rogue,0,0,1
+c63bg1.png,Luxury Suite,Ornithopter,0,0,1
+c63bg2.png,Ornithopter,Ornithopter,1,1,1
+c63bg3.png,Ornithopter,Ornithopter,1,1,1
+c63bg4.png,Ornithopter,Ornithopter,1,1,1
+c63bg5.png,Ornithopter,Ornithopter,1,1,1
+c63bg6.png,Ornithopter,Ornithopter,1,1,1
+c63bg7.png,Ornithopter,Ornithopter,1,1,1
+c63bg8.png,Ornithopter,Ornithopter,1,1,1
+c64bg1.png,"Oko, the Ringleader",Pursued Whale,0,0,1
+c64bg2.png,Pursued Whale,Pursued Whale,1,1,1
+c64bg3.png,Coveted Jewel,Pursued Whale,0,0,1
+c64bg4.png,The Grand Calcutron,Pursued Whale,0,0,1
+c64bg5.png,Handy Dandy Clone Machine,Pursued Whale,0,0,1
+c64bg6.png,Reverse Damage,Pursued Whale,0,0,1
+c64bg7.png,Pursued Whale,Pursued Whale,1,1,1
+c64bg8.png,The Grand Calcutron,Pursued Whale,0,0,1
+c65bg1.png,Echoing Ruin,Echoing Ruin,1,1,1
+c65bg2.png,Echoing Ruin,Echoing Ruin,1,1,1
+c65bg3.png,Echoing Ruin,Echoing Ruin,1,1,1
+c65bg4.png,Echoing Ruin,Echoing Ruin,1,1,1
+c65bg5.png,Echoing Ruin,Echoing Ruin,1,1,1
+c65bg6.png,Echoing Ruin,Echoing Ruin,1,1,1
+c65bg7.png,Echoing Ruin,Echoing Ruin,1,1,1
+c65bg8.png,Echoing Ruin,Echoing Ruin,1,1,1
+c66bg1.png,Swamp,Swamp,1,1,1
+c66bg2.png,Swamp,Swamp,1,1,1
+c66bg3.png,Swamp,Swamp,1,1,1
+c66bg4.png,Swamp,Swamp,1,1,1
+c66bg5.png,Swamp,Swamp,1,1,1
+c66bg6.png,Swamp,Swamp,1,1,1
+c66bg7.png,Swamp,Swamp,1,1,1
+c66bg8.png,Swamp,Swamp,1,1,1
+c67bg1.png,Tower of the Magistrate,Tower of the Magistrate,1,1,1
+c67bg2.png,Tower of the Magistrate,Tower of the Magistrate,1,1,1
+c67bg3.png,Tower of the Magistrate,Tower of the Magistrate,1,1,1
+c67bg4.png,Tower of the Magistrate,Tower of the Magistrate,1,1,1
+c67bg5.png,Tower of the Magistrate,Tower of the Magistrate,1,1,1
+c67bg6.png,Tower of the Magistrate,Tower of the Magistrate,1,1,1
+c67bg7.png,Tower of the Magistrate,Tower of the Magistrate,1,1,1
+c67bg8.png,Zuko Tutorial,Tower of the Magistrate,0,0,1
+c68bg1.png,Western Paladin,Western Paladin,1,1,1
+c68bg2.png,Western Paladin,Western Paladin,1,1,1
+c68bg3.png,Western Paladin,Western Paladin,1,1,1
+c68bg4.png,Western Paladin,Western Paladin,1,1,1
+c68bg5.png,Western Paladin,Western Paladin,1,1,1
+c68bg6.png,Western Paladin,Western Paladin,1,1,1
+c68bg7.png,Western Paladin,Western Paladin,1,1,1
+c68bg8.png,The War Games,Western Paladin,0,0,1
+c69bg1.png,No match,Scrawling Crawler,0,0,0
+c69bg2.png,Scrawling Crawler,Scrawling Crawler,1,1,1
+c69bg3.png,No match,Scrawling Crawler,0,0,0
+c69bg4.png,No match,Scrawling Crawler,0,0,0
+c69bg5.png,No match,Scrawling Crawler,0,0,0
+c69bg6.png,No match,Scrawling Crawler,0,0,0
+c69bg7.png,Scrawling Crawler,Scrawling Crawler,1,1,1
+c69bg8.png,No match,Scrawling Crawler,0,0,0
+c6bg1.png,Knight Exemplar,Knight Exemplar,1,1,1
+c6bg2.png,Knight Exemplar,Knight Exemplar,1,1,1
+c6bg3.png,Knight Exemplar,Knight Exemplar,1,1,1
+c6bg4.png,Knight Exemplar,Knight Exemplar,1,1,1
+c6bg5.png,Knight Exemplar,Knight Exemplar,1,1,1
+c6bg6.png,Knight Exemplar,Knight Exemplar,1,1,1
+c6bg7.png,Knight Exemplar,Knight Exemplar,1,1,1
+c6bg8.png,Sacred Foundry,Knight Exemplar,0,0,1
+c70bg1.png,Fateful Handoff,Fateful Handoff,1,1,1
+c70bg2.png,Fateful Handoff,Fateful Handoff,1,1,1
+c70bg3.png,Fateful Handoff,Fateful Handoff,1,1,1
+c70bg4.png,Fateful Handoff,Fateful Handoff,1,1,1
+c70bg5.png,Fateful Handoff,Fateful Handoff,1,1,1
+c70bg6.png,Fateful Handoff,Fateful Handoff,1,1,1
+c70bg7.png,Fateful Handoff,Fateful Handoff,1,1,1
+c70bg8.png,Fateful Handoff,Fateful Handoff,1,1,1
+c71bg1.png,Twilight Mire,"Alhammarret, High Arbiter",0,1,1
+c71bg2.png,Twilight Mire,"Alhammarret, High Arbiter",0,1,1
+c71bg3.png,Twilight Mire,"Alhammarret, High Arbiter",0,1,1
+c71bg4.png,Twilight Mire,"Alhammarret, High Arbiter",0,1,1
+c71bg5.png,Twilight Mire,"Alhammarret, High Arbiter",0,1,1
+c71bg6.png,Twilight Mire,"Alhammarret, High Arbiter",0,1,1
+c71bg7.png,Twilight Mire,"Alhammarret, High Arbiter",0,1,1
+c71bg8.png,Island,"Alhammarret, High Arbiter",0,0,1
+c72bg1.png,"Black Cat, Cunning Thief","Black Cat, Cunning Thief",1,1,1
+c72bg2.png,"Black Cat, Cunning Thief","Black Cat, Cunning Thief",1,1,1
+c72bg3.png,"Black Cat, Cunning Thief","Black Cat, Cunning Thief",1,1,1
+c72bg4.png,"Black Cat, Cunning Thief","Black Cat, Cunning Thief",1,1,1
+c72bg5.png,"Black Cat, Cunning Thief","Black Cat, Cunning Thief",1,1,1
+c72bg6.png,"Black Cat, Cunning Thief","Black Cat, Cunning Thief",1,1,1
+c72bg7.png,"Black Cat, Cunning Thief","Black Cat, Cunning Thief",1,1,1
+c72bg8.png,Noble Banneret,"Black Cat, Cunning Thief",0,0,1
+c73bg1.png,Cloudblazer,Cloudblazer,1,1,1
+c73bg2.png,Cloudblazer,Cloudblazer,1,1,1
+c73bg3.png,Cloudblazer,Cloudblazer,1,1,1
+c73bg4.png,Cloudblazer,Cloudblazer,1,1,1
+c73bg5.png,Cloudblazer,Cloudblazer,1,1,1
+c73bg6.png,Cloudblazer,Cloudblazer,1,1,1
+c73bg7.png,Cloudblazer,Cloudblazer,1,1,1
+c73bg8.png,Cloudblazer,Cloudblazer,1,1,1
+c74bg1.png,No match,"Bennie Bracks, Zoologist",0,0,0
+c74bg2.png,"Bennie Bracks, Zoologist","Bennie Bracks, Zoologist",1,1,1
+c74bg3.png,No match,"Bennie Bracks, Zoologist",0,0,0
+c74bg4.png,"Bennie Bracks, Zoologist","Bennie Bracks, Zoologist",1,1,1
+c74bg5.png,No match,"Bennie Bracks, Zoologist",0,0,0
+c74bg6.png,No match,"Bennie Bracks, Zoologist",0,0,0
+c74bg7.png,"Bennie Bracks, Zoologist","Bennie Bracks, Zoologist",1,1,1
+c74bg8.png,No match,"Bennie Bracks, Zoologist",0,0,0
+c75bg1.png,Wash Out,Wash Out,1,1,1
+c75bg2.png,Wash Out,Wash Out,1,1,1
+c75bg3.png,Wash Out,Wash Out,1,1,1
+c75bg4.png,Wash Out,Wash Out,1,1,1
+c75bg5.png,Wash Out,Wash Out,1,1,1
+c75bg6.png,Wash Out,Wash Out,1,1,1
+c75bg7.png,Wash Out,Wash Out,1,1,1
+c75bg8.png,Wash Out,Wash Out,1,0,1
+c76bg1.png,Green Sun's Zenith,Green Sun's Zenith,1,1,1
+c76bg2.png,Green Sun's Zenith,Green Sun's Zenith,1,1,1
+c76bg3.png,Green Sun's Zenith,Green Sun's Zenith,1,1,1
+c76bg4.png,Green Sun's Zenith,Green Sun's Zenith,1,1,1
+c76bg5.png,Green Sun's Zenith,Green Sun's Zenith,1,1,1
+c76bg6.png,Green Sun's Zenith,Green Sun's Zenith,1,1,1
+c76bg7.png,Green Sun's Zenith,Green Sun's Zenith,1,1,1
+c76bg8.png,Green Sun's Zenith,Green Sun's Zenith,1,1,1
+c77bg1.png,Builder's Talent,Builder's Talent,1,1,1
+c77bg2.png,Builder's Talent,Builder's Talent,1,1,1
+c77bg3.png,Builder's Talent,Builder's Talent,1,1,1
+c77bg4.png,Builder's Talent,Builder's Talent,1,1,1
+c77bg5.png,Builder's Talent,Builder's Talent,1,1,1
+c77bg6.png,Builder's Talent,Builder's Talent,1,1,1
+c77bg7.png,Builder's Talent,Builder's Talent,1,1,1
+c77bg8.png,Builder's Talent,Builder's Talent,1,1,1
+c78bg1.png,Foundry Inspector,Foundry Inspector,1,1,1
+c78bg2.png,Foundry Inspector,Foundry Inspector,1,1,1
+c78bg3.png,Foundry Inspector,Foundry Inspector,1,1,1
+c78bg4.png,Foundry Inspector,Foundry Inspector,1,1,1
+c78bg5.png,Foundry Inspector,Foundry Inspector,1,1,1
+c78bg6.png,Foundry Inspector,Foundry Inspector,1,1,1
+c78bg7.png,Foundry Inspector,Foundry Inspector,1,1,1
+c78bg8.png,"Chandra, Awakened Inferno",Foundry Inspector,0,0,1
+c79bg1.png,White Sun's Zenith,White Sun's Zenith,1,1,1
+c79bg2.png,White Sun's Zenith,White Sun's Zenith,1,1,1
+c79bg3.png,White Sun's Zenith,White Sun's Zenith,1,1,1
+c79bg4.png,White Sun's Zenith,White Sun's Zenith,1,1,1
+c79bg5.png,White Sun's Zenith,White Sun's Zenith,1,1,1
+c79bg6.png,White Sun's Zenith,White Sun's Zenith,1,1,1
+c79bg7.png,White Sun's Zenith,White Sun's Zenith,1,1,1
+c79bg8.png,Awaken the Honored Dead,White Sun's Zenith,0,0,1
+c7bg1.png,Wirewood Elf,Wirewood Elf,1,1,1
+c7bg2.png,Wirewood Elf,Wirewood Elf,1,1,1
+c7bg3.png,Wirewood Elf,Wirewood Elf,1,1,1
+c7bg4.png,Wirewood Elf,Wirewood Elf,1,1,1
+c7bg5.png,Wirewood Elf,Wirewood Elf,1,1,1
+c7bg6.png,Wirewood Elf,Wirewood Elf,1,1,1
+c7bg7.png,Wirewood Elf,Wirewood Elf,1,1,1
+c7bg8.png,Wirewood Elf,Wirewood Elf,1,1,1
+c80bg1.png,Ghor-Clan Bloodscale,Ogre Taskmaster,0,0,1
+c80bg2.png,Ogre Taskmaster,Ogre Taskmaster,1,1,1
+c80bg3.png,Ogre Taskmaster,Ogre Taskmaster,1,1,1
+c80bg4.png,Ogre Taskmaster,Ogre Taskmaster,1,1,1
+c80bg5.png,Ogre Taskmaster,Ogre Taskmaster,1,1,1
+c80bg6.png,Ogre Taskmaster,Ogre Taskmaster,1,1,1
+c80bg7.png,Ogre Taskmaster,Ogre Taskmaster,1,1,1
+c80bg8.png,Ogre Taskmaster,Ogre Taskmaster,1,1,1
+c81bg1.png,Draugr Necromancer,Draugr Necromancer,1,1,1
+c81bg2.png,True Polymorph,Draugr Necromancer,0,1,1
+c81bg3.png,Draugr Necromancer,Draugr Necromancer,1,1,1
+c81bg4.png,Draugr Necromancer,Draugr Necromancer,1,1,1
+c81bg5.png,Draugr Necromancer,Draugr Necromancer,1,1,1
+c81bg6.png,Draugr Necromancer,Draugr Necromancer,1,1,1
+c81bg7.png,True Polymorph,Draugr Necromancer,0,1,1
+c81bg8.png,Niko Defies Destiny,Draugr Necromancer,0,0,1
+c82bg1.png,Undercover Crocodelf,Undercover Crocodelf,1,1,1
+c82bg2.png,Undercover Crocodelf,Undercover Crocodelf,1,1,1
+c82bg3.png,Undercover Crocodelf,Undercover Crocodelf,1,1,1
+c82bg4.png,Undercover Crocodelf,Undercover Crocodelf,1,1,1
+c82bg5.png,Undercover Crocodelf,Undercover Crocodelf,1,1,1
+c82bg6.png,Undercover Crocodelf,Undercover Crocodelf,1,1,1
+c82bg7.png,Undercover Crocodelf,Undercover Crocodelf,1,1,1
+c82bg8.png,Mite-y,Undercover Crocodelf,0,0,1
+c83bg1.png,Queen Marchesa,Island,0,1,1
+c83bg2.png,Queen Marchesa,Island,0,1,1
+c83bg3.png,Queen Marchesa,Island,0,1,1
+c83bg4.png,Queen Marchesa,Island,0,1,1
+c83bg5.png,Queen Marchesa,Island,0,1,1
+c83bg6.png,Queen Marchesa,Island,0,1,1
+c83bg7.png,Queen Marchesa,Island,0,1,1
+c83bg8.png,Island,Island,1,1,1
+c84bg1.png,Shoreline Salvager,Shoreline Salvager,1,1,1
+c84bg2.png,Shoreline Salvager,Shoreline Salvager,1,1,1
+c84bg3.png,Shoreline Salvager,Shoreline Salvager,1,1,1
+c84bg4.png,Shoreline Salvager,Shoreline Salvager,1,1,1
+c84bg5.png,Shoreline Salvager,Shoreline Salvager,1,1,1
+c84bg6.png,Shoreline Salvager,Shoreline Salvager,1,1,1
+c84bg7.png,Shoreline Salvager,Shoreline Salvager,1,1,1
+c84bg8.png,Urborg,Shoreline Salvager,0,0,1
+c85bg1.png,The Belligerent,The Belligerent,1,1,1
+c85bg2.png,The Belligerent,The Belligerent,1,1,1
+c85bg3.png,The Belligerent,The Belligerent,1,1,1
+c85bg4.png,The Belligerent,The Belligerent,1,1,1
+c85bg5.png,The Belligerent,The Belligerent,1,1,1
+c85bg6.png,The Belligerent,The Belligerent,1,1,1
+c85bg7.png,The Belligerent,The Belligerent,1,1,1
+c85bg8.png,The War Games,The Belligerent,0,0,1
+c86bg1.png,Wheel of Fate,Wheel of Fate,1,1,1
+c86bg2.png,Wheel of Fate,Wheel of Fate,1,1,1
+c86bg3.png,Wheel of Fate,Wheel of Fate,1,1,1
+c86bg4.png,Wheel of Fate,Wheel of Fate,1,1,1
+c86bg5.png,Wheel of Fate,Wheel of Fate,1,1,1
+c86bg6.png,Wheel of Fate,Wheel of Fate,1,1,1
+c86bg7.png,Wheel of Fate,Wheel of Fate,1,1,1
+c86bg8.png,Thraximundar,Wheel of Fate,0,0,1
+c87bg1.png,"Baeloth Barrityl, Entertainer","Nethroi, Apex of Death",0,0,1
+c87bg2.png,"Nethroi, Apex of Death","Nethroi, Apex of Death",1,1,1
+c87bg3.png,"Nethroi, Apex of Death","Nethroi, Apex of Death",1,1,1
+c87bg4.png,"Nethroi, Apex of Death","Nethroi, Apex of Death",1,1,1
+c87bg5.png,"Nethroi, Apex of Death","Nethroi, Apex of Death",1,1,1
+c87bg6.png,"Nethroi, Apex of Death","Nethroi, Apex of Death",1,1,1
+c87bg7.png,"Nethroi, Apex of Death","Nethroi, Apex of Death",1,1,1
+c87bg8.png,"Nethroi, Apex of Death","Nethroi, Apex of Death",1,0,1
+c88bg1.png,No match,Fury,0,0,0
+c88bg2.png,Fury,Fury,1,1,1
+c88bg3.png,Fury,Fury,1,1,1
+c88bg4.png,No match,Fury,0,0,0
+c88bg5.png,No match,Fury,0,0,0
+c88bg6.png,No match,Fury,0,0,0
+c88bg7.png,Fury,Fury,1,1,1
+c88bg8.png,No match,Fury,0,0,0
+c89bg1.png,Plaxcaster Frogling,Plaxcaster Frogling,0,1,1
+c89bg2.png,Plaxcaster Frogling,Plaxcaster Frogling,0,1,1
+c89bg3.png,Plaxcaster Frogling,Plaxcaster Frogling,0,1,1
+c89bg4.png,Plaxcaster Frogling,Plaxcaster Frogling,0,1,1
+c89bg5.png,Plaxcaster Frogling,Plaxcaster Frogling,0,1,1
+c89bg6.png,Plaxcaster Frogling,Plaxcaster Frogling,0,1,1
+c89bg7.png,Plaxcaster Frogling,Plaxcaster Frogling,0,1,1
+c89bg8.png,Plaxcaster Frogling,Plaxcaster Frogling,0,1,1
+c8bg1.png,Akoum Battlesinger,Akoum Battlesinger,1,0,1
+c8bg2.png,Akoum Battlesinger,Akoum Battlesinger,1,1,1
+c8bg3.png,Akoum Battlesinger,Akoum Battlesinger,1,1,1
+c8bg4.png,Akoum Battlesinger,Akoum Battlesinger,1,1,1
+c8bg5.png,Akoum Battlesinger,Akoum Battlesinger,1,1,1
+c8bg6.png,Akoum Battlesinger,Akoum Battlesinger,1,1,1
+c8bg7.png,Akoum Battlesinger,Akoum Battlesinger,1,1,1
+c8bg8.png,Akoum Battlesinger,Akoum Battlesinger,1,1,1
+c90bg1.png,Mystic Monastery,Mystic Monastery,1,1,1
+c90bg2.png,Mystic Monastery,Mystic Monastery,1,1,1
+c90bg3.png,Mystic Monastery,Mystic Monastery,1,1,1
+c90bg4.png,Mystic Monastery,Mystic Monastery,1,1,1
+c90bg5.png,Mystic Monastery,Mystic Monastery,1,1,1
+c90bg6.png,Mystic Monastery,Mystic Monastery,1,1,1
+c90bg7.png,Mystic Monastery,Mystic Monastery,1,1,1
+c90bg8.png,Mystic Monastery,Mystic Monastery,1,1,1
+c91bg1.png,Swords to Plowshares,Swords to Plowshares,1,1,1
+c91bg2.png,Swords to Plowshares,Swords to Plowshares,1,1,1
+c91bg3.png,Swords to Plowshares,Swords to Plowshares,1,1,1
+c91bg4.png,Swords to Plowshares,Swords to Plowshares,1,1,1
+c91bg5.png,Swords to Plowshares,Swords to Plowshares,1,1,1
+c91bg6.png,Swords to Plowshares,Swords to Plowshares,1,1,1
+c91bg7.png,Swords to Plowshares,Swords to Plowshares,1,1,1
+c91bg8.png,Swords to Plowshares,Swords to Plowshares,1,1,1
+c92bg1.png,Piper of the Swarm,Piper of the Swarm,1,1,1
+c92bg2.png,Piper of the Swarm,Piper of the Swarm,1,1,1
+c92bg3.png,Piper of the Swarm,Piper of the Swarm,1,1,1
+c92bg4.png,Piper of the Swarm,Piper of the Swarm,1,1,1
+c92bg5.png,Piper of the Swarm,Piper of the Swarm,1,1,1
+c92bg6.png,Piper of the Swarm,Piper of the Swarm,1,1,1
+c92bg7.png,Piper of the Swarm,Piper of the Swarm,1,1,1
+c92bg8.png,Ascent of the Worthy,Piper of the Swarm,0,0,1
+c93bg1.png,Dack Fayden,Dack Fayden,1,1,1
+c93bg2.png,Dack Fayden,Dack Fayden,1,1,1
+c93bg3.png,Dack Fayden,Dack Fayden,1,1,1
+c93bg4.png,Dack Fayden,Dack Fayden,1,1,1
+c93bg5.png,Dack Fayden,Dack Fayden,1,1,1
+c93bg6.png,Dack Fayden,Dack Fayden,1,1,1
+c93bg7.png,Dack Fayden,Dack Fayden,1,1,1
+c93bg8.png,Dack Fayden,Dack Fayden,1,1,1
+c94bg1.png,Rishadan Port,Rishadan Port,1,1,1
+c94bg2.png,Rishadan Port,Rishadan Port,1,1,1
+c94bg3.png,Rishadan Port,Rishadan Port,1,1,1
+c94bg4.png,Rishadan Port,Rishadan Port,1,1,1
+c94bg5.png,Hour of Eternity,Rishadan Port,0,1,1
+c94bg6.png,Rishadan Port,Rishadan Port,1,1,1
+c94bg7.png,Rishadan Port,Rishadan Port,1,1,1
+c94bg8.png,Rishadan Port,Rishadan Port,1,1,1
+c95bg1.png,Goblin Sledder,Goblin Sledder,1,1,1
+c95bg2.png,Goblin Sledder,Goblin Sledder,1,1,1
+c95bg3.png,Goblin Sledder,Goblin Sledder,1,1,1
+c95bg4.png,Goblin Sledder,Goblin Sledder,1,1,1
+c95bg5.png,Goblin Sledder,Goblin Sledder,1,1,1
+c95bg6.png,Goblin Sledder,Goblin Sledder,1,1,1
+c95bg7.png,Goblin Sledder,Goblin Sledder,1,1,1
+c95bg8.png,Goblin Sledder,Goblin Sledder,1,1,1
+c96bg1.png,Shadow Kin,Shadow Kin,1,1,1
+c96bg2.png,Shadow Kin,Shadow Kin,1,1,1
+c96bg3.png,Shadow Kin,Shadow Kin,1,1,1
+c96bg4.png,Shadow Kin,Shadow Kin,1,1,1
+c96bg5.png,Shadow Kin,Shadow Kin,1,1,1
+c96bg6.png,Shadow Kin,Shadow Kin,1,1,1
+c96bg7.png,Shadow Kin,Shadow Kin,1,1,1
+c96bg8.png,Strip Mine,Shadow Kin,0,0,1
+c97bg1.png,No match,Sardian Avenger,0,0,0
+c97bg2.png,Sardian Avenger,Sardian Avenger,1,1,1
+c97bg3.png,Sardian Avenger,Sardian Avenger,1,1,1
+c97bg4.png,Sardian Avenger,Sardian Avenger,1,1,1
+c97bg5.png,No match,Sardian Avenger,0,0,0
+c97bg6.png,No match,Sardian Avenger,0,0,0
+c97bg7.png,Sardian Avenger,Sardian Avenger,1,1,1
+c97bg8.png,No match,Sardian Avenger,0,0,0
+c98bg1.png,City's Blessing,City's Blessing,1,1,1
+c98bg2.png,City's Blessing,City's Blessing,1,1,1
+c98bg3.png,City's Blessing,City's Blessing,1,1,1
+c98bg4.png,City's Blessing,City's Blessing,1,1,1
+c98bg5.png,City's Blessing,City's Blessing,1,1,1
+c98bg6.png,City's Blessing,City's Blessing,1,1,1
+c98bg7.png,City's Blessing,City's Blessing,1,1,1
+c98bg8.png,City's Blessing,City's Blessing,1,1,1
+c99bg1.png,Icehide Troll,Icehide Troll,1,1,1
+c99bg2.png,Icehide Troll,Icehide Troll,1,1,1
+c99bg3.png,Icehide Troll,Icehide Troll,1,1,1
+c99bg4.png,Icehide Troll,Icehide Troll,1,1,1
+c99bg5.png,Icehide Troll,Icehide Troll,1,1,1
+c99bg6.png,Icehide Troll,Icehide Troll,1,1,1
+c99bg7.png,Icehide Troll,Icehide Troll,1,1,1
+c99bg8.png,Obscura Storefront,Icehide Troll,0,1,1
+c9bg1.png,Aether Figment,Aether Figment,1,1,1
+c9bg2.png,Aether Figment,Aether Figment,1,1,1
+c9bg3.png,Aether Figment,Aether Figment,1,1,1
+c9bg4.png,Aether Figment,Aether Figment,1,1,1
+c9bg5.png,Aether Figment,Aether Figment,1,1,1
+c9bg6.png,Aether Figment,Aether Figment,1,1,1
+c9bg7.png,Aether Figment,Aether Figment,1,1,1
+c9bg8.png,Aether Figment,Aether Figment,1,1,1
