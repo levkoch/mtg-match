@@ -9,68 +9,6 @@ from extract import detect_card_edges_with_border, detect_card_edges_with_sides
 from config import BIN_VERSIONS
 from test_extract import compute_polygon_loss
 
-from concurrent.futures import ProcessPoolExecutor, as_completed
-
-
-def process_single_image(args):
-    """Worker function for processing a single image."""
-    img_path, database_data, bin_version, metadata, corners_dict = args
-
-    # Create matcher instance in worker process
-    matcher = CardMatcher(bin_version=bin_version)
-    matcher.database = database_data
-
-    try:
-        # Process the image
-        card, normalized, corners, top_matches = matcher.process_image(
-            str(img_path), display=False
-        )
-
-        detected = False
-        matched = card is not None
-
-        # Check against ground truth
-        image_key = img_path.stem
-        truth_group = metadata.get(image_key, {})
-        ground_truth = (truth_group.get("name", None), truth_group.get("set", None))
-        is_correct = (card == ground_truth) if card else False
-
-        # Check if correct answer is in top 5
-        correct_in_top5 = (
-            any(match["card"] == ground_truth for match in top_matches)
-            if ground_truth[0] is not None and top_matches
-            else False
-        )
-
-        # Good detection logic
-        gt_corners = corners_dict.get(image_key)
-        if corners is not None and gt_corners is not None:
-            loss, _ = compute_polygon_loss(corners, gt_corners)
-            detected = loss <= 20
-
-        return {
-            "image": img_path.name,
-            "image_key": image_key,
-            "detected": detected,
-            "matched": matched,
-            "card": card,
-            "ground_truth": ground_truth,
-            "correct": is_correct,
-            "correct_in_top5": correct_in_top5,
-        }
-    except Exception as e:
-        print(f"Error processing {img_path}: {e}")
-        return {
-            "image": img_path.name,
-            "image_key": img_path.stem,
-            "detected": False,
-            "matched": False,
-            "card": None,
-            "ground_truth": (None, None),
-            "correct": False,
-            "correct_in_top5": False,
-        }
-
 
 class HistogramMatcher:
     def __init__(self, cards: list[tuple[str, str]], hists: list[list[float]]):
@@ -100,6 +38,7 @@ class CardMatcher:
     ):
         self.database_path = database_path
         self.database: dict[str, dict[str, Any]] = {}
+        self.load_database()
         self.bin_name: str = bin_version
         self.bin_counts: tuple[int, int, int] = dict(BIN_VERSIONS).get(
             bin_version, (8, 8, 8)
@@ -168,9 +107,7 @@ class CardMatcher:
 
         if corners is None:
             # print("  Border detection failed, trying edge detection...")
-            corners, debug_img = detect_card_edges_with_sides(
-                image_path, display=False, show_steps=False
-            )
+            corners, debug_img = detect_card_edges_with_sides(image_path)
 
         if corners is None:
             # print("Card detection failed")
@@ -504,13 +441,12 @@ def main_histograms():
 def main_perceptual():
     """Test the complete pipeline on generated test images."""
     matcher = CardMatcher()
-    matcher.load_database()
+
     if len(matcher.database) == 0:
         print("No database loaded!")
         return
-    database_data = matcher.database
 
-    # Get test images
+    # Get test images in proper order
     generations_dir = Path("./data/generations")
     test_images = list(generations_dir.glob("*.png"))
     test_images.sort()
@@ -525,6 +461,11 @@ def main_perceptual():
     # Load generations metadata for ground truth
     metadata_path = Path("./data/generations.json")
     metadata = {}
+    if metadata_path.exists():
+        with open(metadata_path, "r") as f:
+            metadata = json.load(f)
+    else:
+        print("Warning: No generations.json found for ground truth comparison")
 
     corners_dict = {}
     if metadata_path.exists():
@@ -533,95 +474,130 @@ def main_perceptual():
             for k, v in metadata.items():
                 if "corners" in v:
                     corners_dict[k] = np.array(v["corners"], dtype=np.float32)
-    else:
-        print("Warning: No generations.json found for ground truth comparison")
 
-    # Prepare arguments for each worker
-    database_path = "./data/card_database.json"
-    bin_version = "bin_A"
-
-    args_list = [
-        (img_path, database_data, bin_version, metadata, corners_dict)
-        for img_path in test_images
-    ]
-
-    # Process in parallel
     results = []
-    total_images = len(args_list)
+    for img_path in test_images:
+        card, normalized, corners, top_matches = matcher.process_image(
+            str(img_path), display=False
+        )
 
-    # Use max_workers to control parallelism
-    max_workers = min(6, total_images)
+        detected = False
+        matched = card is not None
 
-    print(f"Using {max_workers} worker processes...")
+        # Check against ground truth
+        image_key = img_path.stem
+        truth_group = metadata.get(image_key, {})
+        ground_truth = (truth_group.get("name", None), truth_group.get("set", None))
 
-    with ProcessPoolExecutor(max_workers=max_workers) as executor:
-        futures = [executor.submit(process_single_image, args) for args in args_list]
+        # Check if top match is correct (regardless of border detection)
+        is_correct_overall = (card == ground_truth) if card else False
 
-        for i, future in enumerate(as_completed(futures)):
-            result = future.result()
-            results.append(result)
+        # Check if correct answer is in top 5 (regardless of border detection)
+        correct_in_top5 = (
+            any(match["card"] == ground_truth for match in top_matches)
+            if top_matches is not None and ground_truth[0] is not None
+            else False
+        )
 
-            # Print progress every 100 images
-            if (i + 1) % 100 == 0 or (i + 1) == total_images:
-                print(
-                    f"Processed {i + 1}/{total_images} images ({(i + 1)/total_images*100:.1f}%)"
-                )
+        # Good detection logic
+        gt_corners = corners_dict.get(image_key)
+        if corners is not None and gt_corners is not None:
+            loss, _ = compute_polygon_loss(corners, gt_corners)
+            detected = loss <= 20  # Only count as detected if "good"
 
-    # Sort results by image name to maintain order
-    results.sort(key=lambda x: x["image"])
+        # check if top match is correct (only if detected well)
+        is_correct_detected = (card == ground_truth) if card and detected else False
+
+        # Check if correct answer is in top 5 (only correctly detected cards)
+        correct_in_top5_detected = (
+            any(match["card"] == ground_truth for match in top_matches)
+            if detected and top_matches is not None and ground_truth[0] is not None
+            else False
+        )
+
+        results.append(
+            {
+                "image": img_path.name,
+                "image_key": image_key,
+                "detected": detected,
+                "matched": card is not None,
+                "card": card,
+                "ground_truth": ground_truth,
+                "correct": is_correct_overall,
+                "correct_detected": is_correct_detected,
+                "correct_in_top5": correct_in_top5,
+                "correct_in_top5_detected": correct_in_top5_detected,
+            }
+        )
 
     # Print summary
     print(f"\nSUMMARY:")
     detected = sum(1 for r in results if r["detected"])
     matched = sum(1 for r in results if r["matched"])
     correct = sum(1 for r in results if r["correct"])
+    correct_detected = sum(1 for r in results if r["correct_detected"])
     correct_in_top5_count = sum(1 for r in results if r["correct_in_top5"])
+    correct_in_top5_count_detected = sum(
+        1 for r in results if r["correct_in_top5_detected"]
+    )
 
     print(
         f"  Detection: {detected}/{len(results)} successful ({detected/len(results)*100:.1f}%)"
     )
     print(
-        f"  Accuracy (on detected cards): {correct}/{detected} correct ({correct/detected*100:.1f}%)"
+        f"  Accuracy (on detected cards): {correct_detected}/{detected} correct ({correct_detected/detected*100:.1f}%)"
     )
     print(
-        f"  Correct in Top-5 (in detected cards): {correct_in_top5_count}/{detected} ({correct_in_top5_count/detected*100:.1f}%)"
+        f"  Correct in Top-5 (in detected cards): {correct_in_top5_count_detected}/{detected} ({correct_in_top5_count_detected/detected*100:.1f}%)"
+    )
+    print(
+        f"  Correct in Top-5 (overall): {correct_in_top5_count}/{len(results)} ({correct_in_top5_count/len(results)*100:.1f}%)"
     )
     print(
         f"  Overall accuracy: {correct}/{len(results)} correct ({correct/len(results)*100:.1f}%)"
     )
 
-    results_file = Path("./data/match_results.csv")
-    with open(results_file, "w", encoding="utf-8", newline="") as f:
-        writer = csv.writer(f)
-        writer.writerow(
-            [
-                "image",
-                "predicted",
-                "ground_truth",
-                "correct",
-                "detected",
-                "matched",
-                "correct_in_top5",
-            ]
-        )
-        for result in results:
-            writer.writerow(
-                [
-                    result["image"],
-                    result["card"][0] if result["card"] else "No match",
-                    (
-                        result["ground_truth"][0]
-                        if result["ground_truth"][0]
-                        else "Unknown"
-                    ),
-                    int(result["correct"]),
-                    int(result["detected"]),
-                    int(result["matched"]),
-                    int(result["correct_in_top5"]),
-                ]
-            )
+    results_file = Path("./data/match_results_1.csv")
 
-    print(f"Results saved to {results_file}")
+    # Additional stats
+    if len(results) > 0:
+        # Breakdown by detection success
+        detected_results = [r for r in results if r["detected"]]
+        if detected_results:
+            match_rate_on_detected = sum(
+                1 for r in detected_results if r["matched"]
+            ) / len(detected_results)
+            accuracy_on_detected = sum(
+                1 for r in detected_results if r["correct"]
+            ) / len(detected_results)
+
+            with open(results_file, "w", encoding="utf-8", newline="") as f:
+                writer = csv.writer(f)
+                writer.writerow(
+                    [
+                        "image",
+                        "predicted",
+                        "ground_truth",
+                        "correct",
+                        "detected",
+                        "matched",
+                    ]
+                )
+                for result in results:
+                    writer.writerow(
+                        [
+                            result["image"],
+                            result["card"][0] if result["card"] else "No match",
+                            (
+                                result["ground_truth"][0]
+                                if result["ground_truth"][0]
+                                else "Unknown"
+                            ),
+                            int(result["correct"]),
+                            int(result["detected"]),
+                            int(result["matched"]),
+                        ]
+                    )
 
 
 if __name__ == "__main__":
