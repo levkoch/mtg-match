@@ -187,74 +187,183 @@ def process_single_card(args):
         return None
 
 
+def process_existing_card(args):
+    """Process a card from existing image files."""
+    image_path = args
+
+    try:
+        # Extract card info from filename
+        filename = image_path.stem
+
+        # Try to parse filename format (assuming something like "setcode_cardname.extension")
+        if "_" in filename:
+            parts = filename.split("_", 1)
+            set_code = parts[0]
+            card_name = parts[1].replace("_", " ")
+        else:
+            # Fallback: use filename as card name
+            set_code = "unknown"
+            card_name = filename.replace("_", " ")
+
+        # Load and process image
+        img = cv2.imread(str(image_path))
+        if img is None:
+            print(f"Could not load image: {image_path}")
+            return None
+
+        # Extract features using your existing function
+        features = extract_card_features(img)
+        if not features:
+            return None
+
+        return {
+            "key": filename,
+            "data": {
+                "name": card_name,
+                "set": set_code,
+                "image_url": "",  # No URL for local files
+                "image_file": str(image_path),
+                **features,
+            },
+        }
+
+    except Exception as e:
+        print(f"Error processing {image_path}: {e}")
+        return None
+
+
 def build_database(
     max_cards: int = 10000,
-    output_path: str = "./data/card_database.json",
+    output_path: str = "./data/card_database_phash.json",
     max_workers: int = 8,
+    card_images_dir: str = "./data/card_images",
+    use_existing: bool = False,  # Add this parameter
 ):
     """Build card database using bulk data and parallel processing."""
 
-    print(
-        f"Building card database with CLAHE (max {max_cards} cards, {max_workers} workers)..."
-    )
+    if use_existing:
+        # Process existing images
+        print(f"Building database from existing images in {card_images_dir}...")
 
-    # Create directories
-    images_dir = Path("./data/card_images")
-    images_dir.mkdir(parents=True, exist_ok=True)
+        images_dir = Path(card_images_dir)
+        if not images_dir.exists():
+            print(f"Images directory not found: {card_images_dir}")
+            return
 
-    # Step 1: Get bulk card data
-    start_time = time.time()
-    cards_data = fetch_bulk_cards(max_cards)
+        # Find all image files
+        image_extensions = [".png", ".jpg", ".jpeg", ".PNG", ".JPG", ".JPEG"]
+        image_files = []
+        for ext in image_extensions:
+            image_files.extend(images_dir.glob(f"*{ext}"))
 
-    if not cards_data:
-        print("Failed to get bulk data, exiting...")
-        return
+        print(f"Found {len(image_files)} existing images")
 
-    fetch_time = time.time() - start_time
-    print(f"Data fetch completed in {fetch_time:.1f} seconds")
+        if not image_files:
+            print("No image files found!")
+            return
 
-    # Step 2: Process cards in parallel
-    print(f"Processing {len(cards_data)} cards with {max_workers} workers...")
-    print("Note: CLAHE processing enabled for consistency with matching pipeline")
+        # Process existing images in parallel
+        print(f"Processing {len(image_files)} images with {max_workers} workers...")
 
-    # Prepare arguments
-    args_list = [(card, images_dir) for card in cards_data]
+        database = {}
+        processed_count = 0
+        error_count = 0
 
-    database = {}
-    processed_count = 0
-    error_count = 0
+        start_time = time.time()
 
-    process_start = time.time()
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            # Use process_existing_card instead of process_single_card
+            futures = [
+                executor.submit(process_existing_card, img_path)
+                for img_path in image_files
+            ]
 
-    with ThreadPoolExecutor(max_workers=max_workers) as executor:
-        # Submit all jobs
-        futures = [executor.submit(process_single_card, args) for args in args_list]
+            # Collect results with progress tracking
+            for i, future in enumerate(as_completed(futures)):
+                result = future.result()
 
-        # Collect results with progress tracking
-        for i, future in enumerate(as_completed(futures)):
-            result = future.result()
+                if result:
+                    database[result["key"]] = result["data"]
+                    processed_count += 1
+                else:
+                    error_count += 1
 
-            if result:
-                database[result["key"]] = result["data"]
-                processed_count += 1
-            else:
-                error_count += 1
+                # Print progress every 100 images
+                if (i + 1) % 100 == 0:
+                    progress = (i + 1) / len(image_files) * 100
+                    elapsed = time.time() - start_time
+                    rate = (i + 1) / elapsed if elapsed > 0 else 0
+                    eta = (len(image_files) - i - 1) / rate if rate > 0 else 0
+                    print(
+                        f"Progress: {i + 1}/{len(image_files)} ({progress:.1f}%) - "
+                        f"{processed_count} successful, {error_count} failed - "
+                        f"Rate: {rate:.1f} images/sec - ETA: {eta:.0f}s"
+                    )
 
-            # Print progress every 50 cards
-            if (i + 1) % 50 == 0:
-                progress = (i + 1) / len(cards_data) * 100
-                elapsed = time.time() - process_start
-                rate = (i + 1) / elapsed if elapsed > 0 else 0
-                eta = (len(cards_data) - i - 1) / rate if rate > 0 else 0
-                print(
-                    f"Progress: {i + 1}/{len(cards_data)} ({progress:.1f}%) - "
-                    f"{processed_count} successful, {error_count} failed - "
-                    f"Rate: {rate:.1f} cards/sec - ETA: {eta:.0f}s"
-                )
+        total_time = time.time() - start_time
 
-    process_time = time.time() - process_start
+    else:
+        # Original download logic (your existing code)
+        print(
+            f"Building card database with CLAHE (max {max_cards} cards, {max_workers} workers)..."
+        )
 
-    # Step 3: Save database
+        # Create directories
+        images_dir = Path("./data/card_images")
+        images_dir.mkdir(parents=True, exist_ok=True)
+
+        # Step 1: Get bulk card data
+        start_time = time.time()
+        cards_data = fetch_bulk_cards(max_cards)
+
+        if not cards_data:
+            print("Failed to get bulk data, exiting...")
+            return
+
+        fetch_time = time.time() - start_time
+        print(f"Data fetch completed in {fetch_time:.1f} seconds")
+
+        # Process cards in parallel
+        print(f"Processing {len(cards_data)} cards with {max_workers} workers...")
+
+        # Prepare arguments
+        args_list = [(card, images_dir) for card in cards_data]
+
+        database = {}
+        processed_count = 0
+        error_count = 0
+
+        process_start = time.time()
+
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            # Submit all jobs
+            futures = [executor.submit(process_single_card, args) for args in args_list]
+
+            # Collect results with progress tracking
+            for i, future in enumerate(as_completed(futures)):
+                result = future.result()
+
+                if result:
+                    database[result["key"]] = result["data"]
+                    processed_count += 1
+                else:
+                    error_count += 1
+
+                # Print progress every 50 cards
+                if (i + 1) % 50 == 0:
+                    progress = (i + 1) / len(cards_data) * 100
+                    elapsed = time.time() - process_start
+                    rate = (i + 1) / elapsed if elapsed > 0 else 0
+                    eta = (len(cards_data) - i - 1) / rate if rate > 0 else 0
+                    print(
+                        f"Progress: {i + 1}/{len(cards_data)} ({progress:.1f}%) - "
+                        f"{processed_count} successful, {error_count} failed - "
+                        f"Rate: {rate:.1f} cards/sec - ETA: {eta:.0f}s"
+                    )
+
+        total_time = time.time() - start_time
+
+    # Step 3: Save database (common for both paths)
     print(f"\nSaving database with {len(database)} cards...")
     Path(output_path).parent.mkdir(parents=True, exist_ok=True)
 
@@ -262,24 +371,26 @@ def build_database(
         json.dump(database, f, indent=2)
 
     # Print final summary
-    total_time = time.time() - start_time
     print(f"\n=== BUILD COMPLETE ===")
     print(f"Total time: {total_time:.1f} seconds ({total_time/60:.1f} minutes)")
-    print(f"Data fetch: {fetch_time:.1f}s, Processing: {process_time:.1f}s")
-    print(f"Successfully processed: {processed_count}/{len(cards_data)} cards")
-    print(
-        f"Error rate: {error_count}/{len(cards_data)} ({error_count/len(cards_data)*100:.1f}%)"
-    )
-    print(f"Processing rate: {processed_count/process_time:.1f} cards/second")
+    print(f"Successfully processed: {processed_count} cards")
+    print(f"Processing rate: {processed_count/total_time:.1f} cards/second")
     print(f"Database saved to: {output_path}")
-    print(f"Images saved to: {images_dir}")
-    print(f"Features: pHash + color histograms with CLAHE preprocessing")
+    if use_existing:
+        print(f"Processed existing images from: {card_images_dir}")
+    else:
+        print(f"Images saved to: {images_dir}")
 
 
 def main():
     """Main function with command-line interface."""
     parser = argparse.ArgumentParser(
         description="Build MTG card database using bulk data and parallel processing"
+    )
+    parser.add_argument(
+        "--existing",
+        action="store_true",
+        help="Process existing images instead of downloading",
     )
     parser.add_argument(
         "--max-cards",
@@ -289,8 +400,8 @@ def main():
     )
     parser.add_argument(
         "--output",
-        default="./data/card_database.json",
-        help="Output database file (default: ./data/card_database.json)",
+        default="./data/card_database_phash.json",
+        help="Output database file (default: ./data/card_database_phash.json)",
     )
     parser.add_argument(
         "--workers", type=int, default=8, help="Number of worker threads (default: 8)"
@@ -304,7 +415,12 @@ def main():
     max_cards = args.max_cards
     max_workers = args.workers
 
-    build_database(max_cards, args.output, max_workers)
+    build_database(
+        max_cards=max_cards,
+        output_path=args.output,
+        max_workers=args.workers,
+        use_existing=args.existing,
+    )
 
 
 if __name__ == "__main__":
