@@ -17,6 +17,7 @@ from extract import (
     detect_card_edges_with_border,
     detect_card_edges_with_border_hsearch,
     detect_card_edges_with_sides,
+    detect_card_edges_with_sides_hsearch
 )
 
 THRESHOLDS = [1, 3, 5, 10, 20, 40, 60, 100]
@@ -297,10 +298,9 @@ if __name__ == '__main__':
 
     results_sides = evaluate_detection(
         labels, './data/generations', detect_card_edges_with_sides, # display=True
-
     )
 
-    display_losses(results_sides, 'side detection')
+    display_losses(results_sides, 'side detection (before tuning)')
 
     results_border = evaluate_detection(
         labels, './data/generations', detect_card_edges_with_border, # display=True
@@ -308,13 +308,21 @@ if __name__ == '__main__':
 
     display_losses(results_border, 'border detection (before tuning)')
 
-    def detect_tuned(img_path: str, A, B):
+    def border_detect_tuned(img_path: str, A, B):
         return detect_card_edges_with_border_hsearch(
             img_path, black_threshold=30, blur_kernel=(3,3), close_iterations=1, open_iterations=2)
     
-    results_tuned = evaluate_detection(
-        labels, './data/generations', detect_tuned,
+    results_border_tuned = evaluate_detection(
+        labels, './data/generations', border_detect_tuned,
     )
-    display_losses(results_tuned, 'tuned border detection')
+    display_losses(results_border_tuned, 'tuned border detection')
+
+    def side_detect_tuned(img_path: str, A, B):
+        return detect_card_edges_with_sides_hsearch(
+            img_path, thresh_c=5, kernel_size=(5,5), size_thresh=5000, approx_epsilon=0.01)
+    
+    results_sides_tuned = evaluate_detection(
+        labels, './data/generations', side_detect_tuned,)
+    display_losses(results_sides_tuned, 'tuned side detection')
 
     
