@@ -12,3 +12,8 @@ data/card_database_phash.json
 
 # mac nonsense
 .DS_Store
+
+# tex log files
+*.aux
+*.log
+*.out
