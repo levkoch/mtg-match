@@ -77,6 +77,7 @@ class CardMatcher:
             bin_version, (8, 8, 8)
         )
         self.matcher = None
+        self.db_hashes = None
 
     def load_database(self):
         """Load card database from JSON file."""
@@ -239,47 +240,72 @@ class CardMatcher:
         # Normalize by total bits
         return distance / len(bin1)
 
+    def hamming_distance_vectorized(self, query_hash: str, db_hashes: list[str]) -> np.ndarray:
+        """Calculate Hamming distance using numpy unpackbits."""
+        if not db_hashes:
+            return np.array([])
+        
+        # Convert hex to bit arrays
+        query_bytes = np.frombuffer(bytes.fromhex(query_hash), dtype=np.uint8)
+        query_bits = np.unpackbits(query_bytes)
+    
+        
+        # XOR and count differences
+        differences = np.sum(self.db_bits != query_bits, axis=1)
+        
+        # Normalize
+        total_bits = len(query_bits)
+        return differences / total_bits
+
     def match_perceptual_hash(
         self, card_image: np.ndarray, top_k: int = 5
-    ) -> Optional[list[tuple[str, str]]]:
-        """Match card using perceptual hash only."""
+    ) -> Optional[list[dict]]:
+        """Match card using perceptual hash only - vectorized version with numpy top-k."""
         if len(self.database) == 0:
             return None
 
         # Extract features from query image
         query_hash = self.compute_perceptual_hash(card_image)
 
-        best_match = None
-        best_score = float("inf")
-        matches_found = 0
+        if not self.db_hashes:
+            valid_cards = []
+            db_hashes = []
 
-        all_scores = []
+            for card_key, card_data in self.database.items():
+                if "perceptual_hash" in card_data:
+                    valid_cards.append(card_data)
+                    db_hashes.append(card_data["perceptual_hash"])
 
-        for card_key, card_data in self.database.items():
-            try:
-                # Skip cards without required features
-                if "perceptual_hash" not in card_data:
-                    continue
+            self.db_hashes = db_hashes
+            self.valid_cards = valid_cards
 
-                # Calculate hash distance
-                db_hash = card_data["perceptual_hash"]
-                hash_distance = self.hamming_distance(query_hash, db_hash)
+            self.db_bits = np.array([
+                np.unpackbits(np.frombuffer(bytes.fromhex(h), dtype=np.uint8))
+                for h in db_hashes
+            ])
 
-                all_scores.append(
-                    {
-                        "card": (card_data["name"], card_data["set"]),
-                        "hash_distance": hash_distance,
-                        "score": 1.0 - hash_distance,
-                    }
-                )
-            except Exception as e:
-                continue
+        # Vectorized distance computation for all hashes at once
+        hash_distances = self.hamming_distance_vectorized(query_hash, self.db_hashes)
+        
+        # Use numpy argpartition to find top-k smallest distances efficiently
+        # This is O(n) instead of O(n log n) for full sort
+        k = min(top_k, len(hash_distances))
+        top_k_indices = np.argpartition(hash_distances, k-1)[:k]
+        
+        # Sort only the top-k results
+        top_k_indices = top_k_indices[np.argsort(hash_distances[top_k_indices])]
+        
+        # Build results for top-k only
+        return [
+            {
+                "card": (self.valid_cards[idx]["name"], self.valid_cards[idx]["set"]),
+                "hash_distance": float(hash_distances[idx]),
+                "score": 1.0 - float(hash_distances[idx]),
+            }
+            for idx in top_k_indices
+        ]
 
-        # Sort by hash distance (lower is better)
-        all_scores.sort(key=lambda x: x["hash_distance"])
-
-        return all_scores[:top_k]
-
+    
     def match_histogram(
         self, card_image: np.ndarray, top_k: int = 5
     ) -> list[dict[str, Any]]:
