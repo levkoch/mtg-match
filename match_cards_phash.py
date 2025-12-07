@@ -241,7 +241,7 @@ class CardMatcher:
 
     def match_perceptual_hash(
         self, card_image: np.ndarray, top_k: int = 5
-    ) -> Optional[tuple[str, str]]:
+    ) -> Optional[list[tuple[str, str]]]:
         """Match card using perceptual hash only."""
         if len(self.database) == 0:
             return None
