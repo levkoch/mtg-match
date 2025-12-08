@@ -7,6 +7,7 @@ import csv
 
 from extract import detect_card_edges_with_border, detect_card_edges_with_sides
 from config import BIN_VERSIONS
+from match_forest import MatchFilter
 from test_extract import compute_polygon_loss
 from build_database import Card
 
@@ -86,6 +87,8 @@ class CardMatcher:
 
         self.db_hash_bits = None
         self.db_hist_bits = None
+
+        self.match_filter = MatchFilter(model_path="./data/match_filter_model.pkl")
 
         self.load_database()
 
@@ -321,7 +324,7 @@ class CardMatcher:
         query_hist = self.compute_color_histogram(card_image)
         return self.matcher.find_matches(query_hist, top_k=top_k)
 
-    def process_image(
+    def process_image_old(
         self, image_path: str, display: bool = True, 
         match_func: Literal['perceptual', 'histogram', 'combined'] = "perceptual", 
         top_k: int = 5
@@ -360,6 +363,81 @@ class CardMatcher:
         # Display results
         if display:
             self.display_results(image_path, normalized_card, corners, card, top_matches[0]['score'])
+
+        return card, normalized_card, corners, top_matches
+    
+    def process_image(
+        self, image_path: str, display: bool = True, 
+        match_func: Literal['perceptual', 'histogram', 'combined'] = "perceptual", 
+        top_k: int = 3, # use k=3, as the forest only cares about the top 3 items.
+        use_filter: bool = True
+    ) -> Tuple[Optional[Card], Optional[np.ndarray], Optional[np.ndarray], Optional[list[dict]]]:
+        """
+        Complete pipeline: detect → normalize → match → filter.
+        
+        Args:
+            image_path: Path to input image
+            display: Whether to display results
+            match_func: Matching method ('perceptual', 'histogram', 'combined')
+            top_k: Number of top matches to return
+            use_filter: Whether to apply Random Forest filter to reduce false positives
+            
+        Returns:
+            - card dataclass with information (or None if filtered out)
+            - normalized detected card image
+            - corners of the detected card
+            - top_matches list with confidence scores added
+        """
+        
+        # Detection and normalization
+        normalized_card, corners = self.detect_and_extract_card(image_path)
+
+        if normalized_card is None:
+            return None, None, None, None
+
+        if match_func == "histogram":
+            matches = self.match_histogram(normalized_card, top_k)
+            card = matches[0]["card"] if matches else None
+            top_matches = matches
+        elif match_func == "combined":
+            # Get top-5 from pHash, then re-rank with histogram
+            top_matches = self.match_perceptual_hash(normalized_card, top_k)
+            if top_matches and self.matcher is None:
+                # Initialize histogram matcher if needed
+                self.match_histogram(normalized_card, top_k=1)
+            if top_matches and self.matcher:
+                query_hist = self.compute_color_histogram(normalized_card)
+                top_matches = self.matcher.rerank_candidates(query_hist, top_matches)
+            card = top_matches[0]["card"] if top_matches else None
+        else:  # perceptual
+            top_matches = self.match_perceptual_hash(normalized_card, top_k)
+            card = top_matches[0]["card"] if top_matches else None
+
+        # Apply filter if enabled
+        filter_accepted = True
+        filter_confidence = 1.0
+        
+        if use_filter and hasattr(self, 'match_filter') and self.match_filter is not None:
+            filter_accepted, filter_confidence = self.match_filter.should_accept_match(top_matches)
+            
+            if not filter_accepted:
+                # Match was filtered out as likely false positive
+                card = None
+                if display: 
+                    print(f"Match filtered out (confidence: {filter_confidence:.3f} < {self.match_filter.threshold:.3f})")
+        
+        # Add filter confidence to top matches
+        if top_matches:
+            top_matches[0]['filter_confidence'] = filter_confidence
+            top_matches[0]['filter_accepted'] = filter_accepted
+
+        # Display results
+        if display:
+            score = top_matches[0]['score'] if top_matches else 0
+            self.display_results(image_path, normalized_card, corners, card, score)
+            if use_filter and hasattr(self, 'match_filter'):
+                status = ":) ACCEPTED" if filter_accepted else ":( FILTERED"
+                print(f"Filter: {status} (confidence: {filter_confidence:.3f})")
 
         return card, normalized_card, corners, top_matches
 
@@ -548,7 +626,7 @@ def main_histograms():
         json.dump(bin_results, f, indent=4)
 
 
-def main_match_func(match_func: Literal['perceptual', 'histogram', 'combined'] = "perceptual"):
+def main_match_func(match_func: Literal['perceptual', 'histogram', 'combined'] = "combined", use_filter=False):
     """Test the complete pipeline on generated test images."""
     matcher = CardMatcher()
 
@@ -584,7 +662,7 @@ def main_match_func(match_func: Literal['perceptual', 'histogram', 'combined'] =
     results = []
     for img_path in test_images:
         card, normalized, corners, top_matches = matcher.process_image(
-            str(img_path), display=False, match_func=match_func, top_k=10
+            str(img_path), display=False, match_func=match_func, top_k=10, use_filter=use_filter
         )
         
         true_key = true_keys[img_path.stem]
@@ -783,9 +861,7 @@ def main_combined():
 
 
 if __name__ == "__main__":
-    main_match_func('histogram')
-    print('')
-    main_match_func('perceptual')
-    print('')
-    main_match_func('combined')
+    main_match_func('combined', use_filter=True)
+    # main_match_func('histogram')
+    # main_match_func('perceptual')
     # main_combined()

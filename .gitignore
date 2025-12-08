@@ -6,6 +6,7 @@ data/generations.json
 data/basis
 data/basis.json
 
+# this is like 55GB of data lol
 data/card_images
 data/card_database.json
 data/card_database_phash.json
