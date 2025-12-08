@@ -48,6 +48,16 @@ class Card():
         card_key = self.scryfall_url.split("/card/")[1]
         card_key = card_key.split("?")[0]
         return card_key.replace("/", "_")
+    
+    def to_dict(self) -> dict[str, str]:
+        return {
+            'name': self.name,
+            'collector_num': self.collector_num,
+            'set_code': self.set_code,
+            'image_url': self.image_url,
+            'scryfall_url': self.scryfall_url,
+            'card_key': self.card_key
+        }
 
 def fetch_bulk_cards(max_cards: Optional[int] = None) -> list[Card]:
     """Download bulk card data from Scryfall (much faster for large datasets)."""

@@ -376,7 +376,7 @@ def load_backgrounds(background_path: str) -> list[np.ndarray]:
 if __name__ == "__main__":
 
     cards: list[tuple[np.ndarray, str]] = collect_test_cards_from_local_database(
-        database_path="./data/card_database_phash.json", total_cards=100
+        database_path="./data/card_database_phash.json", total_cards=1000
     )
 
     if not cards:
