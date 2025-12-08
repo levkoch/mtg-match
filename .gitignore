@@ -10,6 +10,8 @@ data/card_images
 data/card_database.json
 data/card_database_phash.json
 
+data/checkpoints
+
 # mac nonsense
 .DS_Store
 
