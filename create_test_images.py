@@ -7,11 +7,12 @@ dumps data into:
     - ./data/generations.json for labels
 """
 
+import os
 import cv2
 import json
 import numpy as np
 import random
-import requests
+import shutil
 
 from concurrent import futures
 from pathlib import Path
@@ -397,6 +398,8 @@ if __name__ == "__main__":
     output = {}
 
     # Create directories
+    if os.path.exists('./data/generations'):
+        shutil.rmtree('./data/generations')
     Path("./data/generations").mkdir(parents=True, exist_ok=True)
 
     card_count = 0
