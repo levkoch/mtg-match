@@ -21,13 +21,14 @@ from config import SETS
 
 
 def collect_test_cards_from_local_database(
-    database_path: str = "./data/card_database.json",
+    database_path: str = "./data/card_database_phash.json",
+    card_images_dir: str = "./data/card_images",
     total_cards: int = 100,
-) -> list[tuple[np.ndarray, str, str]]:
+) -> list[tuple[np.ndarray, str]]:
     """
-    Load card images from local files using the database's image_file paths.
+    Load card images from /data/card_images directory.
 
-    Returns list of (image_array, card_name, card_set) tuples.
+    Returns list of (image_array, card_key) tuples.
     """
 
     # Load the database
@@ -52,20 +53,12 @@ def collect_test_cards_from_local_database(
         selected_keys = card_keys
 
     result = []
-    basis = {}
+    card_images_path = Path(card_images_dir)
 
-    # Create basis directory
-    Path("./data/basis").mkdir(parents=True, exist_ok=True)
-
-    for i, key in enumerate(selected_keys):
+    for i, card_key in enumerate(selected_keys):
         try:
-            card_data = database[key]
-            card_name = card_data["name"]
-            card_set = card_data["set"]
-
-            # Get image file path from database
-            if "image_file" in card_data:
-                image_path = Path(card_data["image_file"])
+            # Construct image path from card_key
+            image_path = card_images_path / f"{card_key}.png"
 
             if not image_path.exists():
                 print(f"Image file not found: {image_path}")
@@ -82,12 +75,7 @@ def collect_test_cards_from_local_database(
             alpha = np.ones((img.shape[0], img.shape[1], 1), dtype=img.dtype) * 255
             img = np.concatenate([img, alpha], axis=2)
 
-            result.append((img, card_name, card_set))
-
-            # Save basis image and metadata
-            card_num = f"c{len(result):04d}"
-            cv2.imwrite(f"./data/basis/{card_num}.png", img)
-            basis[card_num] = {"name": card_name, "set": card_set}
+            result.append((img, card_key))
 
             print(
                 f"loaded [{len(result):04d}/{len(selected_keys):04d}] local card images",
@@ -95,16 +83,12 @@ def collect_test_cards_from_local_database(
             )
 
         except Exception as e:
-            print(f"Error processing card {key}: {e}")
+            print(f"Error processing card {card_key}: {e}")
             continue
 
     print("")
 
-    # Save basis metadata
-    with open("./data/basis.json", "w") as fp:
-        json.dump(basis, fp, indent=2)
-
-    print(f"Loaded {len(result)} cards from local images")
+    print(f"Loaded {len(result)} cards from {card_images_dir}")
     return result
 
 
@@ -390,8 +374,8 @@ def load_backgrounds(background_path: str) -> list[np.ndarray]:
 
 if __name__ == "__main__":
 
-    cards: list[tuple[np.ndarray, str, str]] = collect_test_cards_from_local_database(
-        database_path="./data/card_database.json", total_cards=100
+    cards: list[tuple[np.ndarray, str]] = collect_test_cards_from_local_database(
+        database_path="./data/card_database_phash.json", total_cards=100
     )
 
     if not cards:
@@ -418,7 +402,7 @@ if __name__ == "__main__":
     card_count = 0
     total_images = 0
 
-    for card_img, card_name, card_set in cards:
+    for card_img, card_key in cards:
         card_count += 1
 
         for background_count, background in enumerate(backgrounds):
@@ -432,8 +416,7 @@ if __name__ == "__main__":
 
             output[filename] = {
                 "corners": corners,
-                "name": card_name,
-                "set": card_set,
+                "card_key": card_key,
             }
 
             cv2.imwrite(f"./data/generations/{filename}.png", result)

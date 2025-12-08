@@ -8,13 +8,15 @@ import csv
 from extract import detect_card_edges_with_border, detect_card_edges_with_sides
 from config import BIN_VERSIONS
 from test_extract import compute_polygon_loss
-
+from build_database import Card
 
 class HistogramMatcher:
-    def __init__(self, cards: list[tuple[str, str]], hists: list[list[float]]):
+    def __init__(self, cards: list[Card], hists: list[list[float]]):
+        if len(cards) != len(hists): 
+            raise ValueError('each card must have a matching histogram')
         self.cards = cards
         self.db_hists = np.array(hists, dtype=np.float32)
-        self.card_to_idx = {card: i for i, card in enumerate(cards)}
+        self.card_to_idx = {card.card_key: i for i, card in enumerate(cards)}
 
     def find_matches(self, query_hist, top_k=5):
         """
@@ -44,8 +46,8 @@ class HistogramMatcher:
         query_hist = query_hist.flatten().astype(np.float32)
 
         for candidate in candidates:
-            card = candidate["card"]
-            idx = self.card_to_idx.get(card)
+            card: Card = candidate["card"]
+            idx = self.card_to_idx.get(card.card_key)
             if idx is not None:
                 hist_score = float(np.dot(self.db_hists[idx], query_hist))
             else:
@@ -66,27 +68,58 @@ class CardMatcher:
 
     def __init__(
         self,
-        database_path: str = "./data/card_database.json",
-        bin_version: str = "bin_A",
+        database_path: str = "./data/card_database_phash.json",
+        bin_version: str = "bin_G", # default to our best bin G
     ):
         self.database_path = database_path
-        self.database: dict[str, dict[str, Any]] = {}
-        self.load_database()
+        self.database: dict[str, Card] = {}
+        self.card_keys: list[str] = []
+    
         self.bin_name: str = bin_version
         self.bin_counts: tuple[int, int, int] = dict(BIN_VERSIONS).get(
-            bin_version, (8, 8, 8)
+            bin_version, (16, 4, 4)
         )
+
         self.matcher = None
-        self.db_hashes = None
+        self.db_hashes = []
+        self.db_hists = []
+
+        self.db_hash_bits = None
+        self.db_hist_bits = None
+
+        self.load_database()
 
     def load_database(self):
-        """Load card database from JSON file."""
+        """Load card database from JSON file and convert to Card objects."""
         if not Path(self.database_path).exists():
             print(f"Database not found: {self.database_path}")
             return
 
         with open(self.database_path, "r") as f:
-            self.database = json.load(f)
+            raw_data = json.load(f)
+
+        # Convert raw JSON data to Card objects
+        for card_key, card_data in raw_data.items():
+            card = Card(
+                name=card_data["name"],
+                collector_num=card_data["collector_num"],
+                set_code=card_data["set_code"],
+                image_url=card_data["image_url"],
+                scryfall_url=card_data["scryfall_url"]
+            )
+
+            self.card_keys.append(card_key)
+            self.database[card_key] = card
+
+            self.db_hashes.append(card_data['perceptual_hash'])
+            self.db_hists.append(card_data[self.bin_name])
+
+        self.db_hash_bits = np.array([
+            np.unpackbits(np.frombuffer(bytes.fromhex(h), dtype=np.uint8)) for h in self.db_hashes
+        ])
+
+        self.db_hist_bits = np.array(self.db_hists, dtype=np.float32)
+            
         print(f"Loaded {len(self.database)} cards from database")
 
     def order_corners(self, corners: np.ndarray) -> np.ndarray:
@@ -240,18 +273,17 @@ class CardMatcher:
         # Normalize by total bits
         return distance / len(bin1)
 
-    def hamming_distance_vectorized(self, query_hash: str, db_hashes: list[str]) -> np.ndarray:
+    def hamming_distance_vectorized(self, query_hash: str) -> np.ndarray:
         """Calculate Hamming distance using numpy unpackbits."""
-        if not db_hashes:
+        if len(self.db_hashes) == 0:
             return np.array([])
         
         # Convert hex to bit arrays
         query_bytes = np.frombuffer(bytes.fromhex(query_hash), dtype=np.uint8)
         query_bits = np.unpackbits(query_bytes)
     
-        
         # XOR and count differences
-        differences = np.sum(self.db_bits != query_bits, axis=1)
+        differences = np.sum(self.db_hash_bits != query_bits, axis=1)
         
         # Normalize
         total_bits = len(query_bits)
@@ -267,25 +299,11 @@ class CardMatcher:
         # Extract features from query image
         query_hash = self.compute_perceptual_hash(card_image)
 
-        if not self.db_hashes:
-            valid_cards = []
-            db_hashes = []
-
-            for card_key, card_data in self.database.items():
-                if "perceptual_hash" in card_data:
-                    valid_cards.append(card_data)
-                    db_hashes.append(card_data["perceptual_hash"])
-
-            self.db_hashes = db_hashes
-            self.valid_cards = valid_cards
-
-            self.db_bits = np.array([
-                np.unpackbits(np.frombuffer(bytes.fromhex(h), dtype=np.uint8))
-                for h in db_hashes
-            ])
-
         # Vectorized distance computation for all hashes at once
-        hash_distances = self.hamming_distance_vectorized(query_hash, self.db_hashes)
+        hash_distances = self.hamming_distance_vectorized(query_hash)
+        
+        if len(hash_distances) == 0:
+            return None
         
         # Use numpy argpartition to find top-k smallest distances efficiently
         # This is O(n) instead of O(n log n) for full sort
@@ -295,10 +313,10 @@ class CardMatcher:
         # Sort only the top-k results
         top_k_indices = top_k_indices[np.argsort(hash_distances[top_k_indices])]
         
-        # Build results for top-k only
+        # Build results for top-k only - use card_keys list to get cards
         return [
             {
-                "card": (self.valid_cards[idx]["name"], self.valid_cards[idx]["set"]),
+                "card": self.database[self.card_keys[idx]],
                 "hash_distance": float(hash_distances[idx]),
                 "score": 1.0 - float(hash_distances[idx]),
             }
@@ -311,14 +329,9 @@ class CardMatcher:
     ) -> list[dict[str, Any]]:
         """Match card using color histogram."""
         if self.matcher is None:
-            # Prepare matcher
-            names = []
-            hists = []
-            for card_data in self.database.values():
-                if self.bin_name in card_data:
-                    names.append((card_data["name"], card_data["set"]))
-                    hists.append(card_data[self.bin_name])
-            self.matcher = HistogramMatcher(names, hists)
+            # Prepare matcher - use the cached data from load_database
+            cards = [self.database[key] for key in self.card_keys]
+            self.matcher = HistogramMatcher(cards, self.db_hists)
 
         query_hist = self.compute_color_histogram(card_image)
         matches = self.matcher.find_matches(query_hist, top_k=top_k)
@@ -327,7 +340,7 @@ class CardMatcher:
 
     def process_image(
         self, image_path: str, display: bool = True, match_func="perceptual"
-    ) -> Tuple[Optional[tuple[str, str]], Optional[np.ndarray]]:
+    ) -> Tuple[Optional[Card], Optional[np.ndarray], Optional[np.ndarray], Optional[list[dict]]]:
         """Complete pipeline: detect → normalize → match."""
 
         # Detection and normalization
@@ -365,7 +378,7 @@ class CardMatcher:
         image_path: str,
         normalized_card: np.ndarray,
         corners: np.ndarray,
-        card_name: Optional[tuple[str, str]],
+        card: Optional[Card],
         score: float,
     ):
         """Display detection and matching results."""
@@ -391,20 +404,20 @@ class CardMatcher:
 
         # Normalized with match result
         axes[1].imshow(cv2.cvtColor(normalized_card, cv2.COLOR_BGR2RGB))
-        title = f'Normalized Card\n{card_name or "No Match"}\n(Score: {score:.3f})'
+        card_display = f"{card.name} ({card.set_code})" if card else "No Match"
+        title = f'Normalized Card\n{card_display}\n(Score: {score:.3f})'
         axes[1].set_title(title)
         axes[1].axis("off")
 
         plt.tight_layout()
         plt.show()
 
-    def get_card_info(self, card_name: str) -> dict:
+    def get_card_info(self, card_name: str) -> Optional[Card]:
         """Get full card info by name."""
-        for card_data in self.database.values():
-            if card_data["name"] == card_name:
-                return card_data
-        return {}
-
+        for card in self.database.values():
+            if card.name == card_name:
+                return card
+        return None
 
 def main_histograms():
     bin_results = {}
