@@ -12,7 +12,7 @@ from extract import detect_card_edges_with_border, detect_card_edges_with_sides
 from test_extract import compute_polygon_loss
 
 
-class DeepHashExtractor:
+class DeepEmbeddingExtractor:
     """Extract deep learning embeddings for card images."""
 
     def __init__(self, model_name="resnet50"):
@@ -79,7 +79,7 @@ class DeepHashExtractor:
             return None
 
 
-class DeepHashMatcher:
+class DeepEmbeddingMatcher:
     """Card matching using deep learning embeddings."""
 
     def __init__(
@@ -92,19 +92,19 @@ class DeepHashMatcher:
         self.load_database(max_cards=9669)
 
         # Initialize feature extractor
-        self.extractor = DeepHashExtractor(model_name=model_name)
+        self.extractor = DeepEmbeddingExtractor(model_name=model_name)
 
         # Pre-compute database embeddings array for fast similarity search
         self.card_list = []
         self.embeddings = []
         for card_data in self.database.values():
-            if "deep_hash" in card_data:
+            if "deep_Embedding" in card_data:
                 self.card_list.append((card_data["name"], card_data["set"]))
-                self.embeddings.append(card_data["deep_hash"])
+                self.embeddings.append(card_data["deep_Embedding"])
 
         if self.embeddings:
             self.embeddings = np.array(self.embeddings, dtype=np.float32)
-            print(f"Loaded {len(self.embeddings)} deep hash embeddings")
+            print(f"Loaded {len(self.embeddings)} deep Embedding embeddings")
 
     def load_database(self, max_cards: Optional[int] = None):
         """Load card database from JSON file."""
@@ -178,7 +178,7 @@ class DeepHashMatcher:
             return None, None
 
     def match_card(self, card_image: np.ndarray, top_k: int = 5) -> list:
-        """Match card using deep hash embeddings with cosine similarity."""
+        """Match card using deep Embedding embeddings with cosine similarity."""
         if len(self.embeddings) == 0:
             return []
 
@@ -216,7 +216,7 @@ class DeepHashMatcher:
         if normalized_card is None:
             return None, None, None, []
 
-        # Match using deep hash
+        # Match using deep Embedding
         top_matches = self.match_card(normalized_card, top_k=5)
         card = top_matches[0]["card"] if top_matches else None
 
@@ -224,8 +224,8 @@ class DeepHashMatcher:
 
 
 def main():
-    """Test deep hash matching on generated test images."""
-    matcher = DeepHashMatcher(model_name="resnet50")
+    """Test deep Embedding matching on generated test images."""
+    matcher = DeepEmbeddingMatcher(model_name="resnet50")
 
     if len(matcher.database) == 0:
         print("No database loaded!")
@@ -240,7 +240,7 @@ def main():
         print("No test images found in ./data/generations/")
         return
 
-    print(f"Testing deep hash pipeline on {len(test_images)} generated images...")
+    print(f"Testing deep Embedding pipeline on {len(test_images)} generated images...")
 
     # Load metadata for ground truth
     metadata_path = Path("./data/generations.json")
@@ -316,7 +316,7 @@ def main():
     )
 
     # Save results
-    with open("./data/deep_hash_results.csv", "w", newline="") as f:
+    with open("./data/deep_Embedding_results.csv", "w", newline="") as f:
         writer = csv.writer(f)
         writer.writerow(["image", "predicted", "ground_truth", "correct", "detected"])
         for r in results:
