@@ -21,3 +21,5 @@ python match_forest.py
 ```bash
 python demo_video.py
 ```
+
+You can view our analysis and findings in `writing/CSE 455 MTG MATCH.pdf`.
